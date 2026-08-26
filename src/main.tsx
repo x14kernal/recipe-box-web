@@ -1,14 +1,20 @@
 import './index.css';
 
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
 import { createBrowserRouter, RouterProvider } from 'react-router';
+import { createRoot } from 'react-dom/client';
 import { AuthProvider } from './contexts/AuthContext';
-import RecipesPage from './pages/RecipesPage';
+
 import RootLayout from './layouts/RootLayout';
 import AuthLayout from './layouts/AuthLayout';
+import ProtectedLayout from './layouts/ProtectedLayout';
+
+import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
+import RecipesPage from './pages/recipes/RecipesPage';
+import RecipePage from './pages/recipes/RecipePage';
+import NewRecipePage from './pages/recipes/NewRecipePage';
+import EditRecipePage from './pages/recipes/EditRecipePage';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +27,23 @@ const router = createBrowserRouter([
       {
         path: 'recipes',
         Component: RecipesPage,
+      },
+      {
+        path: 'recipes/:id',
+        Component: RecipePage,
+      },
+      {
+        Component: ProtectedLayout,
+        children: [
+          {
+            path: 'recipes/new',
+            Component: NewRecipePage,
+          },
+          {
+            path: 'recipes/:id/edit',
+            Component: EditRecipePage,
+          },
+        ],
       },
     ],
   },

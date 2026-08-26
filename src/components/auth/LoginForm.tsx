@@ -1,12 +1,10 @@
 import { useState, type SubmitEvent } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Form } from './ui/Form';
-import { useNavigate } from 'react-router';
+import { useAuth } from '../../contexts/AuthContext';
+import { Form } from '../ui/Form';
 
-export default function SignupForm() {
+export default function LoginForm() {
   const [error, setError] = useState<string | null>(null);
-  const { signup, isSigning } = useAuth();
-  const navigate = useNavigate();
+  const { login, isLogging } = useAuth();
 
   async function submitHandler(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -17,8 +15,7 @@ export default function SignupForm() {
     if (typeof email !== 'string' || typeof password !== 'string') return;
 
     try {
-      await signup(email, password);
-      navigate('/', { replace: true });
+      await login(email, password);
     } catch (error) {
       // you need to handle zod errors
       setError(
@@ -37,10 +34,11 @@ export default function SignupForm() {
           id="password"
           label="Password"
         />
-        <Form.SubmitButton isLoading={isSigning}>
-          {isSigning ? 'Creating account...' : 'Signup'}
+        <Form.SubmitButton isLoading={isLogging}>
+          {isLogging ? 'Logging in...' : 'Login'}
         </Form.SubmitButton>
       </Form>
+
       {error && <p>{error}</p>}
     </div>
   );
