@@ -1,10 +1,10 @@
 import { type Dispatch, type SetStateAction } from 'react';
 import Input from '../ui/Input';
-import type { FormCreateRecipe, Tag } from '../../types/recipe';
+import type { RecipeFormValues, Tag } from '../../types/recipe';
 
 type Ps = {
   tags: Tag[];
-  onChange: Dispatch<SetStateAction<FormCreateRecipe>>;
+  onChange: Dispatch<SetStateAction<RecipeFormValues>>;
   errors: Record<string, string>;
   onError: Dispatch<
     React.SetStateAction<{

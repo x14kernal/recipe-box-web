@@ -3,12 +3,12 @@ import Input from '../ui/Input';
 import type {
   IngredientFields,
   Ingredient,
-  FormCreateRecipe,
+  RecipeFormValues,
 } from '../../types/recipe';
 
 type Ps = {
   ingredients: Ingredient[];
-  onChange: Dispatch<SetStateAction<FormCreateRecipe>>;
+  onChange: Dispatch<SetStateAction<RecipeFormValues>>;
   errors: Record<string, Record<string, string>>;
   onError: Dispatch<
     React.SetStateAction<{
