@@ -1,32 +1,29 @@
-import type { Recipe, RecipeFormValues } from '../../types/recipe';
-import { toFormValues, toUpdateRecipe } from '../../mappers/recipe';
 import { useNavigate } from 'react-router';
-import { recipes } from '../../api/recipes';
-import RecipeForm from './RecipeForm';
+import { type Recipe, type RecipeForm } from '../../contracts/recipe';
+import { recipe as recipeApi } from '../../api/recipe';
+import { getFormValues, toUpdateRecipe } from '../../mappers/recipe';
+import RecipeFormTemplate from './RecipeFormTemplate';
 
 export default function EditRecipeForm({ recipe }: { recipe: Recipe }) {
   const navigate = useNavigate();
 
-  async function handleSubmit(values: RecipeFormValues) {
-    const update = toUpdateRecipe(values);
+  async function submitHandler(data: RecipeForm) {
+    const response = await recipeApi.update(recipe.id, toUpdateRecipe(data, recipe));
 
-    const response = await recipes.update(recipe.id, update);
+    if (!response.success) throw new Error(response.error.message);
 
-    if (!response.success) {
-      throw new Error(response.error.message);
-    }
-
-    navigate(`/recipes/${recipe.id}`, {
+    const path = response.data.visibility === 'public' ? '/recipes' : '/recipes/mine';
+    navigate(`${path}/${response.data.id}`, {
       state: { success: 'Recipe updated successfully!' },
     });
   }
 
   return (
-    <RecipeForm
-      initialValues={toFormValues(recipe)}
-      onSubmit={handleSubmit}
-      submitLabel="Save Changes"
-      loadingLabel="Saving..."
+    <RecipeFormTemplate
+      initialValues={getFormValues(recipe)}
+      submitLabel="update"
+      loadingLabel="updating.."
+      onSubmit={submitHandler}
     />
   );
 }

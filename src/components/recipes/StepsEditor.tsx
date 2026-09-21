@@ -1,100 +1,122 @@
 import { type Dispatch, type SetStateAction } from 'react';
+import type { NewRecipeStep } from '../../contracts/recipe/step';
 import Input from '../ui/Input';
-import type { RecipeFormValues, Step } from '../../types/recipe';
+import type { RecipeForm } from '../../contracts/recipe';
 
-type Ps = {
-  steps: Step[];
-  onChange: Dispatch<SetStateAction<RecipeFormValues>>;
-  errors: Record<string, string>;
+type StepsEditorProps = {
+  recipeSteps: NewRecipeStep[];
+  onChange: Dispatch<SetStateAction<RecipeForm>>;
+  errors: Record<string, Record<string, string>>;
   onError: Dispatch<
-    React.SetStateAction<{
+    SetStateAction<{
       ingredients: Record<string, Record<string, string>>;
-      steps: Record<string, string>;
+      images: Record<string, string>;
+      steps: Record<string, Record<string, string>>;
       tags: Record<string, string>;
       title: string;
+      visibility: string;
+      servingSize: string;
     }>
   >;
 };
 
-export default function StepsEditor({ steps, onChange, errors, onError }: Ps) {
-  function onAdd() {
-    const stepPlacholder: Step = {
-      id: crypto.randomUUID(),
-      description: '',
-    };
-    onChange((prev) => ({ ...prev, steps: [...prev.steps, stepPlacholder] }));
-  }
-
-  function onDelete(id: string) {
-    onChange((prev) => {
-      if (prev.steps.length === 1) {
-        onError((prev) => ({ ...prev, steps: {} }));
-        return {
-          ...prev,
-          steps: [
-            {
-              id: crypto.randomUUID(),
-              description: '',
-            },
-          ],
-        };
-      }
-      return { ...prev, steps: prev.steps.filter((item) => item.id !== id) };
-    });
-  }
-
-  function onUpdate(id: string, description: string) {
+export default function StepsEditor({ recipeSteps, onChange, errors, onError }: StepsEditorProps) {
+  type Cell = 'description' | 'image';
+  function updateStepField(index: number, cell: Cell, value: string) {
     onChange((prev) => ({
       ...prev,
-      steps: prev.steps.map((s) => {
-        if (s.id === id) {
-          return { ...s, description };
-        }
-        return s;
+      steps: prev.steps.map((step, idx) => {
+        if (idx !== index) return step;
+        return { ...step, [cell]: value };
       }),
     }));
   }
 
+  function addNewEmptyStep() {
+    onChange((prev) => ({ ...prev, steps: [...prev.steps, { description: '', image: null }] }));
+  }
+
+  function removeStep(idx: number) {
+    onChange((prev) => ({ ...prev, steps: prev.steps.filter((_, i) => idx !== i) }));
+    onError((prev) => {
+      const steps = Object.fromEntries(
+        Object.entries(prev.steps)
+          .filter(([key]) => key !== String(idx))
+          .map(([_, value], i) => [i, value])
+      );
+
+      return { ...prev, steps };
+    });
+  }
+
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        {steps.map((step) => (
-          <div
-            key={step.id}
-            className="flex items-start justify-between  gap-2"
-          >
-            <div className="flex-1 flex flex-col gap-0.5">
-              <Input
-                label="step"
-                type="text"
-                name={`steps-[${step.id}]`}
-                id={`step-${step.id}`}
-                value={step.description}
-                onChange={(e) => {
-                  onUpdate(step.id, e.target.value);
-                }}
-              />
-              {errors[step.id] && errors[step.id].length > 0 && (
-                <p className="text-red-700 text-sm">{errors[step.id]}</p>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => onDelete(step.id)}
-              className="flex items-center justify-center font-black w-6 h-6 border p-2 rounded-full cursor-pointer"
-            >
-              X
-            </button>
-          </div>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 my-4">
+        <p className="text-gray-600 text-xl">Steps List</p>
+
+        {recipeSteps.map((ing, idx) => (
+          <StepInput
+            key={idx}
+            index={idx}
+            recipeStep={ing}
+            error={errors[idx]}
+            onUpdate={updateStepField}
+            onRemove={removeStep}
+          />
         ))}
       </div>
-      <button
-        type="button"
-        onClick={onAdd}
-        className="border px-2 py-1 cursor-pointer"
-      >
-        +
+      <button type="button" onClick={addNewEmptyStep} className="bg-gray-100 cursor-pointer p-1">
+        Add Step
       </button>
+    </div>
+  );
+}
+
+type StepInputProps = {
+  index: number;
+  recipeStep: NewRecipeStep;
+  error: Record<string, string>;
+  onUpdate(index: number, cell: 'description' | 'image', value: string): void;
+  onRemove: (idx: number) => void;
+};
+
+function StepInput({ index, recipeStep, error, onUpdate, onRemove }: StepInputProps) {
+  const { description, image } = recipeStep;
+  return (
+    <div className="relative flex gap-2">
+      <div className="flex flex-col gap-1">
+        <Input
+          label="description"
+          type="text"
+          name={`steps[${index}][description]`}
+          id={`description-${index}`}
+          value={description}
+          onChange={(e) => onUpdate(index, 'description', e.target.value)}
+        />
+        {error && error.description.length > 0 && <p className="text-sm text-red-700">{error.description}</p>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <Input
+          label="image link"
+          type="text"
+          name={`steps[${index}][image]`}
+          id={`image-${index}`}
+          value={image ?? ''}
+          onChange={(e) => onUpdate(index, 'image', e.target.value)}
+        />
+        {error && error.image.length > 0 && <p className="text-sm text-red-700">{error.image}</p>}
+      </div>
+
+      {index > 0 && (
+        <button
+          type="button"
+          className="absolute right-0 border p-2 w-5 h-5 flex items-center justify-center text-xs rounded-full hover:bg-red-200 cursor-pointer border-red-400"
+          onClick={() => onRemove(index)}
+        >
+          x
+        </button>
+      )}
     </div>
   );
 }

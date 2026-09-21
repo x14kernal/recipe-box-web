@@ -1,20 +1,14 @@
-import {
-  useState,
-  createContext,
-  type ReactNode,
-  useEffect,
-  useContext,
-} from 'react';
-import type { User } from '../types/user';
+import { useState, createContext, type ReactNode, useEffect, useContext } from 'react';
+import type { LoginUser, RegisterUser, User } from '../contracts/user';
 import { auth } from '../api/auth';
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
   isLogging: boolean;
-  isSigning: boolean;
-  signup: (email: string, password: string) => Promise<User>;
-  login: (email: string, password: string) => Promise<void>;
+  isRegistering: boolean;
+  register: (payload: RegisterUser) => Promise<User>;
+  login: (payload: LoginUser) => Promise<void>;
   logout: () => Promise<void>;
 };
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -23,71 +17,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isLogging, setIsLogging] = useState(false);
-  const [isSigning, setIsSigning] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const login: AuthContextType['login'] = async (email, password) => {
+  const login: AuthContextType['login'] = async ({ identifier, password }) => {
     setIsLogging(true);
     try {
-      const res = await auth.login({ email, password });
-      if (!res.success)
-        throw new Error(`${res.error.code}: ${res.error.message}`);
-
-      localStorage.setItem('recipes-token', res.data.token);
-      setUser(res.data.user);
+      const res = await auth.login({ identifier, password });
+      if (!res.success) throw new Error(`${res.error.code}: ${res.error.message}`);
+      setUser(res.data);
     } finally {
       setIsLogging(false);
     }
   };
 
-  const signup: AuthContextType['signup'] = async (email, password) => {
-    setIsSigning(true);
+  const register: AuthContextType['register'] = async ({ email, password, username, displayName }) => {
+    setIsRegistering(true);
     try {
-      const res = await auth.signup({ email, password });
-      if (!res.success)
-        throw new Error(`${res.error.code}: ${res.error.message}`);
+      const res = await auth.register({ username, email, password, displayName });
+      if (!res.success) throw new Error(`${res.error.code}: ${res.error.message}`);
 
       return res.data;
     } finally {
-      setIsSigning(false);
+      setIsRegistering(false);
     }
   };
 
   const logout: AuthContextType['logout'] = async () => {
-    // call logout api endpoint
-
-    //
-    localStorage.removeItem('recipes-token');
-    setUser(null);
+    try {
+      await auth.logout();
+    } finally {
+      setUser(null);
+    }
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('recipes-token');
-    if (!storedToken) {
-      setLoading(false);
-      return;
-    }
-
-    async function validateToken() {
+    async function verifyAuth() {
       try {
         const res = await auth.me();
+
         if (!res.success) {
-          localStorage.removeItem('recipes-token');
           setUser(null);
           return;
         }
+
         setUser(res.data);
       } finally {
         setLoading(false);
       }
     }
 
-    validateToken();
+    verifyAuth();
   }, []);
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, login, isLogging, signup, isSigning, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, isLogging, register, isRegistering, logout }}>
       {children}
     </AuthContext.Provider>
   );

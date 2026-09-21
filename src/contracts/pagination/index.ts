@@ -7,3 +7,5 @@ export const paginationSchema = z.object({
   prev: z.string().nullable(),
   next: z.string().nullable(),
 });
+
+export type Pagination = z.infer<typeof paginationSchema>;

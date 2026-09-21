@@ -10,11 +10,13 @@ import AuthLayout from './layouts/AuthLayout';
 import ProtectedLayout from './layouts/ProtectedLayout';
 
 import LoginPage from './pages/auth/LoginPage';
-import SignupPage from './pages/auth/SignupPage';
+import RegisterPage from './pages/auth/RegisterPage';
 import RecipesPage from './pages/recipes/RecipesPage';
 import RecipePage from './pages/recipes/RecipePage';
 import NewRecipePage from './pages/recipes/NewRecipePage';
 import EditRecipePage from './pages/recipes/EditRecipePage';
+import MyRecipesPage from './pages/recipes/MyRecipesPage';
+import MyRecipePage from './pages/recipes/MyRecipePage';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,14 @@ const router = createBrowserRouter([
       {
         path: 'recipes',
         Component: RecipesPage,
+      },
+      {
+        path: 'recipes/mine',
+        Component: MyRecipesPage,
+      },
+      {
+        path: 'recipes/mine/:id',
+        Component: MyRecipePage,
       },
       {
         path: 'recipes/:id',
@@ -51,7 +61,7 @@ const router = createBrowserRouter([
     Component: AuthLayout,
     children: [
       { path: '/login', Component: LoginPage },
-      { path: '/signup', Component: SignupPage },
+      { path: '/register', Component: RegisterPage },
     ],
   },
 ]);

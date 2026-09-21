@@ -1,32 +1,29 @@
-import type { RecipeFormValues } from '../../types/recipe';
-import { toCreateRecipe, toFormValues } from '../../mappers/recipe';
 import { useNavigate } from 'react-router';
-import { recipes } from '../../api/recipes';
-import RecipeForm from './RecipeForm';
+import { type RecipeForm } from '../../contracts/recipe';
+import { recipe as recipeApi } from '../../api/recipe';
+import { getFormValues } from '../../mappers/recipe';
+import RecipeFormTemplate from './RecipeFormTemplate';
 
 export default function CreateRecipeForm() {
   const navigate = useNavigate();
 
-  async function handleSubmit(values: RecipeFormValues) {
-    const recipe = toCreateRecipe(values);
+  async function submitHandler(data: RecipeForm) {
+    const response = await recipeApi.create(data);
+    if (!response.success) throw new Error(response.error.message);
 
-    const response = await recipes.create(recipe);
+    const path = response.data.visibility === 'public' ? '/recipes' : '/recipes/mine';
 
-    if (!response.success) {
-      throw new Error(response.error.message);
-    }
-
-    navigate(`/recipes/${response.data.id}`, {
+    navigate(`${path}/${response.data.id}`, {
       state: { success: 'Recipe created successfully!' },
     });
   }
 
   return (
-    <RecipeForm
-      initialValues={toFormValues()}
-      submitLabel="Create Recipe"
-      loadingLabel="Creating..."
-      onSubmit={handleSubmit}
+    <RecipeFormTemplate
+      initialValues={getFormValues()}
+      submitLabel="create"
+      loadingLabel="creating.."
+      onSubmit={submitHandler}
     />
   );
 }

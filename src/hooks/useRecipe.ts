@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { Recipe } from '../types/recipe';
-import { recipes } from '../api/recipes';
+import { recipe as recipeApi } from '../api/recipe';
+import type { Recipe } from '../contracts/recipe';
 
-export function useRecipe(id: string) {
+export function useRecipe(id: string, type: 'all' | 'mine' = 'all') {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -13,22 +13,19 @@ export function useRecipe(id: string) {
       setError(null);
 
       try {
-        const res = await recipes.one(id);
-        if (!res.success)
-          throw new Error(`${res.error.code} ${res.error.message}`);
+        const res = await recipeApi.one(id, `${type === 'mine' ? '/recipes/mine' : '/recipes'}`);
+        if (!res.success) throw new Error(`${res.error.code} ${res.error.message}`);
 
         setRecipe(res.data);
       } catch (error) {
-        setError(
-          error instanceof Error ? error.message : 'Something went wrong!'
-        );
+        setError(error instanceof Error ? error.message : 'Something went wrong!');
       } finally {
         setLoading(false);
       }
     }
 
     fetchRecipe();
-  }, [id]);
+  }, [id, type]);
 
   return { recipe, loading, error };
 }
