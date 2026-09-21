@@ -4,10 +4,10 @@ import { useAuth } from '../../contexts/AuthContext';
 import { recipe as recipeApi } from '../../api/recipe';
 import { useState } from 'react';
 
-export default function RecipePage() {
+export default function MyRecipePage() {
   const { id } = useParams();
   const { user } = useAuth();
-  const { recipe, loading, error } = useRecipe(id!);
+  const { recipe, loading, error } = useRecipe(id!, 'mine');
 
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export default function RecipePage() {
 
     try {
       await recipeApi.remove(id);
-      navigate('/recipes');
+      navigate('/recipes/mine');
     } catch (error) {
       setDeleteError(error instanceof Error ? error.message : 'Failed to delete recipe');
     } finally {
@@ -45,7 +45,9 @@ export default function RecipePage() {
         {user && user.id === recipe.ownerId && (
           <div className="flex items-center gap-4">
             <Link to={`/recipes/${recipe.id}/edit`}>Edit</Link>
-            <button onClick={() => handleDelete(recipe.id)}>{loadingDelete ? 'Deleting...' : 'Delete'}</button>
+            <button className="cursor-pointer" onClick={() => handleDelete(recipe.id)}>
+              {loadingDelete ? 'Deleting...' : 'Delete'}
+            </button>
           </div>
         )}
       </div>

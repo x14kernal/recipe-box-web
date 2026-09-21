@@ -1,29 +1,31 @@
 import { api } from '../lib/api';
+
 import {
   loginResSchema,
   loginSchema,
-  signupResSchema,
-  signupSchema,
+  logoutResSchema,
+  logoutSchema,
+  registerResSchema,
+  registerSchema,
   userResSchema,
-} from '../schemas/user.schema';
-import type { LoginUser, SignupUser } from '../types/user';
+  type LoginUser,
+  type RegisterUser,
+} from '../contracts/user';
 
-const signup = async (data: SignupUser) => {
-  return api.post('/auth/signup', data, signupSchema, signupResSchema);
+const register = async (data: RegisterUser) => {
+  return api.post('/auth/register', data, registerSchema, registerResSchema);
 };
 
 const login = async (data: LoginUser) => {
   return api.post('/auth/login', data, loginSchema, loginResSchema);
 };
 
-const me = async () => {
-  return api.get('/auth/me', userResSchema, true);
-};
+const me = async () => api.get('/auth/me', userResSchema);
 
-const logout = async () => {};
+const logout = async () => api.post('/auth/logout', {}, logoutSchema, logoutResSchema);
 
 export const auth = {
-  signup,
+  register,
   login,
   logout,
   me,

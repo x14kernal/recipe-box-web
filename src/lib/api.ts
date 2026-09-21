@@ -1,26 +1,12 @@
 import z from 'zod';
 
-type RequestOptions = RequestInit & {
-  auth?: boolean;
-};
+type TReqFn = <T>(path: string, schema: z.ZodType<T>, options?: RequestInit) => Promise<T>;
 
-type TReqFn = <T>(
-  path: string,
-  schema: z.ZodType<T>,
-  options?: RequestOptions
-) => Promise<T>;
-
-const request: TReqFn = async (path, schema, options) => {
+const request: TReqFn = async (path, schema, options?) => {
   const url = `${import.meta.env.VITE_API_URL}${path}`;
 
-  let headers = Object.fromEntries(new Headers(options?.headers));
-  if (options?.auth) {
-    const token = localStorage.getItem('recipes-token');
-    if (!token) throw new Error('Authentication required');
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const res = await fetch(url, { ...options, headers });
+  const headers = new Headers(options?.headers);
+  const res = await fetch(url, { ...options, headers, credentials: 'include' });
 
   const data = await res.json();
   const test = z.safeParse(schema, data);
@@ -28,31 +14,20 @@ const request: TReqFn = async (path, schema, options) => {
   return test.data;
 };
 
-type TGetFn = <TRes>(
-  path: string,
-  resSchema: z.ZodType<TRes>,
-  auth?: boolean
-) => Promise<TRes>;
+type TGetFn = <TRes>(path: string, resSchema: z.ZodType<TRes>) => Promise<TRes>;
 
-const get: TGetFn = async (path, resSchema, auth = false) => {
-  return request(path, resSchema, { auth });
+const get: TGetFn = async (path, resSchema) => {
+  return request(path, resSchema);
 };
 
 type TPostFn = <TReq, TRes>(
   path: string,
   data: TReq,
   reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>,
-  auth?: boolean
+  resSchema: z.ZodType<TRes>
 ) => Promise<TRes>;
 
-const post: TPostFn = async (
-  path,
-  data,
-  reqSchema,
-  resSchema,
-  auth = false
-) => {
+const post: TPostFn = async (path, data, reqSchema, resSchema) => {
   // check data aginst reqSchema before calling request
   const test = z.safeParse(reqSchema, data);
   if (!test.success) throw test.error;
@@ -65,24 +40,17 @@ const post: TPostFn = async (
     },
     body: JSON.stringify(test.data),
   };
-  return request(path, resSchema, { ...options, auth });
+  return request(path, resSchema, options);
 };
 
 type TPatchFn = <TReq, TRes>(
   path: string,
   data: TReq,
   reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>,
-  auth?: boolean
+  resSchema: z.ZodType<TRes>
 ) => Promise<TRes>;
 
-const patch: TPatchFn = async (
-  path,
-  data,
-  reqSchema,
-  resSchema,
-  auth = false
-) => {
+const patch: TPatchFn = async (path, data, reqSchema, resSchema) => {
   // check data aginst reqSchema before calling request
   const test = z.safeParse(reqSchema, data);
   if (!test.success) throw test.error;
@@ -90,37 +58,16 @@ const patch: TPatchFn = async (
   // if has valid data go
   const options = {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(test.data),
   };
-  return request(path, resSchema, { ...options, auth });
+  return request(path, resSchema, options);
 };
 
-const remove = async (path: string, auth = false): Promise<void> => {
+const remove = async (path: string): Promise<void> => {
   const url = `${import.meta.env.VITE_API_URL}${path}`;
-
-  const headers = new Headers();
-  if (auth) {
-    const token = localStorage.getItem('recipes-token');
-    if (!token) throw new Error('Authentication required');
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-
-  const res = await fetch(url, {
-    method: 'DELETE',
-    headers,
-  });
-
-  if (!res.ok) {
-    throw new Error(`Delete failed: ${res.status}`);
-  }
+  const res = await fetch(url, { method: 'DELETE', credentials: 'include' });
+  if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
 };
 
-export const api = {
-  get,
-  post,
-  patch,
-  remove,
-};
+export const api = { get, post, patch, remove };

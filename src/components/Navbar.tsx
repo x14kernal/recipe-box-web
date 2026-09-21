@@ -11,7 +11,7 @@ export default function Navbar() {
       <div className="flex items-center gap-4">
         {user && (
           <div className="flex items-center justify-between gap-4 text-sm">
-            {/* <p className=" capitalize">welcome, {user.email.split('@')[0]}</p> */}
+            {/* <p className="capitalize">welcome, {user.displayName}</p> */}
             <Link to={'/recipes/new'}>Add Recipe</Link>
             <button type="button" className="cursor-pointer" onClick={logout}>
               Logout
@@ -21,7 +21,7 @@ export default function Navbar() {
         {!user && (
           <>
             <Link to={'/login'}>Login</Link>
-            <Link to={'/signup'}>Signup</Link>
+            <Link to={'/register'}>Register</Link>
           </>
         )}
       </div>

@@ -1,11 +1,14 @@
+import { useSearchParams } from 'react-router';
 import { useEffect, useState } from 'react';
-import type { Recipe } from '../types/recipe';
-import { recipes } from '../api/recipes';
-import type { Pagination } from '../types/pagination';
+import { recipe as recipeApi } from '../api/recipe';
 
-export function useRecipes() {
-  const [path, setPath] = useState('/recipes');
-  const [recipesList, setRecipesList] = useState<Recipe[]>([]);
+import type { RecipeListItem } from '../contracts/recipe';
+import type { Pagination } from '../contracts/pagination';
+
+export function useRecipes(type: 'all' | 'mine' = 'all') {
+  const [searchParams] = useSearchParams();
+
+  const [recipesList, setRecipesList] = useState<RecipeListItem[]>([]);
   const [recipesMeta, setRecipesMeta] = useState<Pagination>({
     limit: 0,
     page: 0,
@@ -13,8 +16,14 @@ export function useRecipes() {
     next: null,
     prev: null,
   });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Everything after "?" in the URL
+  const queryString = searchParams.toString();
+
+  const path = type === 'all' ? '/recipes' : '/recipes/mine';
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -22,22 +31,33 @@ export function useRecipes() {
       setError(null);
 
       try {
-        const res = await recipes.all(path);
-        if (!res.success) throw new Error(res.error.message);
+        const url = queryString ? `${path}?${queryString}` : path;
+
+        const res = await recipeApi.all(url);
+
+        if (!res.success) {
+          throw new Error(res.error.message);
+        }
+
         setRecipesList(res.data);
-        if (res.meta) setRecipesMeta(res.meta);
+
+        if (res.meta) {
+          setRecipesMeta(res.meta);
+        }
       } catch (error) {
-        setError(
-          error instanceof Error ? error.message : 'Something went wrong'
-        );
-        console.error(error);
+        setError(error instanceof Error ? error.message : 'Something went wrong');
       } finally {
         setLoading(false);
       }
     };
 
     fetchRecipes();
-  }, [path]);
+  }, [path, queryString]);
 
-  return { recipesList, recipesMeta, loading, error, setPath };
+  return {
+    recipesList,
+    recipesMeta,
+    loading,
+    error,
+  };
 }

@@ -11,12 +11,7 @@ export function Form({ children, onSubmit }: ComponentProps<'form'>) {
 Form.Input = Input;
 Form.SubmitButton = SubmitButton;
 
-function SubmitButton({
-  children,
-  className,
-  isLoading,
-  ...props
-}: ComponentProps<'button'> & { isLoading: boolean }) {
+function SubmitButton({ children, className, isLoading, ...props }: ComponentProps<'button'> & { isLoading: boolean }) {
   return (
     <button
       type="submit"

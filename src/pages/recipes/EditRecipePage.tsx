@@ -6,24 +6,14 @@ import { useAuth } from '../../contexts/AuthContext';
 export default function EditRecipePage() {
   const { id } = useParams();
   const { user, loading: userLoading } = useAuth();
-  const { recipe, loading: recipeLoading } = useRecipe(id ?? '');
 
-  if (recipeLoading || userLoading) {
-    return <p>Loading...</p>;
-  }
+  const { recipe, loading: recipeLoading } = useRecipe(id ?? '', 'mine');
 
-  if (!user) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (!recipe) {
-    return <p>Recipe not found.</p>;
-  }
-
+  if (recipeLoading || userLoading) return <p>Loading...</p>;
+  if (!user) return <Navigate to="/" replace />;
+  if (!recipe) return <p>Recipe not found.</p>;
   // check if this recipe belonge to this user
-  if (user.id !== recipe.ownerId) {
-    return <Navigate to="/" replace />;
-  }
+  if (user.id !== recipe.ownerId) return <Navigate to="/" replace />;
 
   return (
     <>
