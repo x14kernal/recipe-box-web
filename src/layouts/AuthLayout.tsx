@@ -1,19 +1,29 @@
 import { Navigate, Outlet } from 'react-router';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AuthLayout() {
   const { user, loading } = useAuth();
 
-  if (loading) return <p>Loading....</p>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Skeleton className="h-6 w-24" />
+      </div>
+    );
+  }
 
-  if (user) return <Navigate to="/" replace />;
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
-    <div className="w-full max-w-7xl mx-auto flex flex-col gap-4 bg-sladte-200 min-h-screen px-1">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="flex justify-center items-center h-screen">
-        <section className="w-full mx-auto max-w-md mb-50">
+
+      <main className="flex flex-1 items-center justify-center px-4 py-12">
+        <section className="w-full max-w-md">
           <Outlet />
         </section>
       </main>

@@ -1,23 +1,29 @@
 import { type Dispatch, type SetStateAction } from 'react';
+import { Plus, X } from 'lucide-react';
+
 import type { NewRecipeImage } from '../../contracts/recipe/image';
-import Input from '../ui/Input';
 import type { RecipeForm } from '../../contracts/recipe';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+type FormErrors = {
+  ingredients: Record<string, Record<string, string>>;
+  images: Record<string, string>;
+  steps: Record<string, Record<string, string>>;
+  tags: Record<string, string>;
+  title: string;
+  visibility: string;
+  servingSize: string;
+};
 
 type ImagesEditorProps = {
   recipeImages: NewRecipeImage[];
   onChange: Dispatch<SetStateAction<RecipeForm>>;
   errors: Record<string, string>;
-  onError: Dispatch<
-    SetStateAction<{
-      ingredients: Record<string, Record<string, string>>;
-      images: Record<string, string>;
-      steps: Record<string, Record<string, string>>;
-      tags: Record<string, string>;
-      title: string;
-      visibility: string;
-      servingSize: string;
-    }>
-  >;
+  onError: Dispatch<SetStateAction<FormErrors>>;
 };
 
 export default function ImagesEditor({ recipeImages, onChange, errors, onError }: ImagesEditorProps) {
@@ -26,83 +32,116 @@ export default function ImagesEditor({ recipeImages, onChange, errors, onError }
       ...prev,
       images: prev.images.map((image, idx) => {
         if (idx !== index) return image;
-        return { imageUrl: value };
+
+        return {
+          imageUrl: value,
+        };
       }),
     }));
   }
 
   function addNewEmptyImage() {
-    onChange((prev) => ({ ...prev, images: [...prev.images, { imageUrl: '' }] }));
+    onChange((prev) => ({
+      ...prev,
+      images: [
+        ...prev.images,
+        {
+          imageUrl: '',
+        },
+      ],
+    }));
   }
 
-  function removeImage(idx: number) {
-    onChange((prev) => ({ ...prev, images: prev.images.filter((_, i) => idx !== i) }));
+  function removeImage(index: number) {
+    onChange((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+
     onError((prev) => {
       const images = Object.fromEntries(
         Object.entries(prev.images)
-          .filter(([key]) => key !== String(idx))
+          .filter(([key]) => key !== String(index))
           .map(([_, value], i) => [i, value])
       );
 
-      return { ...prev, images };
+      return {
+        ...prev,
+        images,
+      };
     });
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-4 my-4">
-        <p className="text-gray-600 text-xl">Images List</p>
+    <Card className="border-border/60 bg-muted/30 shadow-sm rounded-7xl">
+      <CardHeader>
+        <CardTitle>Images</CardTitle>
 
-        {recipeImages.map((ing, idx) => (
-          <ImageInput
-            key={idx}
-            index={idx}
-            recipeImage={ing}
-            error={errors[idx]}
-            onUpdate={updateImageField}
-            onRemove={removeImage}
-          />
-        ))}
-      </div>
-      <button type="button" onClick={addNewEmptyImage} className="bg-gray-100 cursor-pointer p-1">
-        Add Image
-      </button>
-    </div>
+        <p className="text-sm text-muted-foreground">Add images that showcase your recipe.</p>
+      </CardHeader>
+
+      <CardContent className="space-y-4">
+        {recipeImages.length > 0 && (
+          <div className="space-y-3">
+            {recipeImages.map((image, index) => (
+              <ImageInput
+                key={index}
+                index={index}
+                recipeImage={image}
+                error={errors[index]}
+                onUpdate={updateImageField}
+                onRemove={removeImage}
+              />
+            ))}
+          </div>
+        )}
+
+        <Button type="button" variant="outline" onClick={addNewEmptyImage}>
+          <Plus />
+          Add image
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
 type ImageInputProps = {
   index: number;
   recipeImage: NewRecipeImage;
-  error: string;
+  error?: string;
   onUpdate(index: number, value: string): void;
-  onRemove: (idx: number) => void;
+  onRemove: (index: number) => void;
 };
 
 function ImageInput({ index, recipeImage, error, onUpdate, onRemove }: ImageInputProps) {
-  const { imageUrl } = recipeImage;
   return (
-    <div className="relative flex gap-2">
-      <div className="flex flex-col gap-1">
+    <div className="relative rounded-5xl border border-border/50 p-4 pr-12 transition-colors hover:bg-muted/50 hover:shadow-sm">
+      <div className="space-y-2">
+        <Label htmlFor={`image-${index}`}>Image {index + 1}</Label>
+
         <Input
-          label={`Link #${index + 1}`}
-          type="text"
+          id={`image-${index}`}
           name={`images[${index}][imageUrl]`}
-          id={`description-${index}`}
-          value={imageUrl}
-          onChange={(e) => onUpdate(index, e.target.value)}
+          type="url"
+          placeholder="https://example.com/image.jpg"
+          value={recipeImage.imageUrl}
+          onChange={(event) => onUpdate(index, event.target.value)}
         />
-        {error && error.length > 0 && <p className="text-sm text-red-700">{error}</p>}
+
+        {error && <p className="text-sm text-destructive">{error}</p>}
       </div>
 
       {index > 0 && (
-        <button
+        <Button
           type="button"
-          className="absolute right-0 border p-2 w-5 h-5 flex items-center justify-center text-xs rounded-full hover:bg-red-200 cursor-pointer border-red-400"
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-2 size-8 text-muted-foreground hover:text-destructive"
           onClick={() => onRemove(index)}
+          aria-label={`Remove image ${index + 1}`}
         >
-          x
-        </button>
+          <X />
+        </Button>
       )}
     </div>
   );
