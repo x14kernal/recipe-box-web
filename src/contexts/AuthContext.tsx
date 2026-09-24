@@ -23,7 +23,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLogging(true);
     try {
       const res = await auth.login({ identifier, password });
-      if (!res.success) throw new Error(`${res.error.code}: ${res.error.message}`);
+      if (!res.success) throw res.error;
+
       setUser(res.data);
     } finally {
       setIsLogging(false);
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsRegistering(true);
     try {
       const res = await auth.register({ username, email, password, displayName });
-      if (!res.success) throw new Error(`${res.error.code}: ${res.error.message}`);
+      if (!res.success) throw res.error;
 
       return res.data;
     } finally {

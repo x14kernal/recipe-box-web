@@ -2,9 +2,10 @@ import RecipesList from '../../components/recipes/RecipesList';
 
 export default function RecipesPage() {
   return (
-    <>
-      <h1 className="text-4xl p-2 mb-4">All Recipes</h1>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
+
       <RecipesList />
-    </>
+    </div>
   );
 }

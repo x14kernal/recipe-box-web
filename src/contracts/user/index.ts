@@ -3,7 +3,7 @@ import { responseSchema, responseWithoutDataSchema } from '../api/index';
 
 const userBaseSchema = z.object({
   email: z.email().trim().toLowerCase(),
-  username: z.string().trim().toLowerCase(),
+  username: z.string().trim().toLowerCase().min(4, 'Username is required'),
   displayName: z.string().trim().toLowerCase().nullable(),
 });
 
@@ -15,7 +15,7 @@ const passwordSchema = z.string().min(8).max(24);
 export const registerSchema = userBaseSchema.extend({ password: passwordSchema });
 
 export const loginSchema = z.object({
-  identifier: z.string().trim().toLowerCase(),
+  identifier: z.string().trim().toLowerCase().min(4, 'Email or username is required'),
   password: passwordSchema,
 });
 
