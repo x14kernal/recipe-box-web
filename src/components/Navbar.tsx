@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoggingOut } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -34,8 +34,8 @@ export default function Navbar() {
               Add Recipe
             </Button>
 
-            <Button variant="outline" onClick={logout}>
-              Logout
+            <Button variant="outline" onClick={logout} disabled={isLoggingOut}>
+              {isLoggingOut ? 'Logging out..' : 'Logout'}
             </Button>
           </>
         ) : (

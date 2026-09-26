@@ -109,9 +109,7 @@ export default function RegisterForm() {
       typeof password !== 'string' ||
       typeof displayName !== 'string'
     ) {
-      setErrors({
-        form: 'Please fill in all fields.',
-      });
+      setErrors({ form: 'Please fill in all fields.' });
       return;
     }
 
