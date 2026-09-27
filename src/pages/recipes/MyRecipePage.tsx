@@ -17,25 +17,25 @@ export default function MyRecipePage() {
   const { user } = useAuth();
   const { recipe, loading, error } = useRecipe(id!, 'mine');
 
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isMoveToTrash, setIsMoveToTrash] = useState(false);
+  const [trashError, setTrashError] = useState<string | null>(null);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const success = location.state?.success;
 
-  async function handleDelete(id: string) {
-    setLoadingDelete(true);
-    setDeleteError(null);
+  async function handleMoveToTrash(id: string) {
+    setIsMoveToTrash(true);
+    setTrashError(null);
 
     try {
-      await recipeApi.remove(id);
-      navigate('/recipes/mine');
+      await recipeApi.trash(id);
+      navigate('/recipes/trash');
     } catch (error) {
-      setDeleteError(error instanceof Error ? error.message : 'Failed to delete recipe');
+      setTrashError(error instanceof Error ? error.message : 'Failed to move recipe into trash');
     } finally {
-      setLoadingDelete(false);
+      setIsMoveToTrash(false);
     }
   }
 
@@ -81,10 +81,10 @@ export default function MyRecipePage() {
         </Alert>
       )}
 
-      {deleteError && (
+      {trashError && (
         <Alert variant="destructive">
-          <AlertTitle>Delete failed</AlertTitle>
-          <AlertDescription>{deleteError}</AlertDescription>
+          <AlertTitle>Move to trash failed</AlertTitle>
+          <AlertDescription>{trashError}</AlertDescription>
         </Alert>
       )}
 
@@ -100,21 +100,14 @@ export default function MyRecipePage() {
 
           {isOwner && (
             <div className="flex gap-2">
-              <Link
-                to={`/recipes/${recipe.id}/edit`}
-                className={buttonVariants({ variant: 'outline' })}
-              >
+              <Link to={`/recipes/${recipe.id}/edit`} className={buttonVariants({ variant: 'outline' })}>
                 <Pencil />
                 Edit
               </Link>
 
-              <Button
-                variant="destructive"
-                disabled={loadingDelete}
-                onClick={() => handleDelete(recipe.id)}
-              >
+              <Button variant="destructive" disabled={isMoveToTrash} onClick={() => handleMoveToTrash(recipe.id)}>
                 <Trash2 />
-                {loadingDelete ? 'Deleting...' : 'Delete'}
+                {isMoveToTrash ? 'Trashing...' : 'Move to trash'}
               </Button>
             </div>
           )}
@@ -150,10 +143,7 @@ export default function MyRecipePage() {
 
         <ul className="grid gap-2 sm:grid-cols-2">
           {recipe.ingredients.map((ingredient) => (
-            <li
-              key={ingredient.id}
-              className="bg-muted/40 flex items-center justify-between rounded-lg px-4 py-3"
-            >
+            <li key={ingredient.id} className="bg-muted/40 flex items-center justify-between rounded-lg px-4 py-3">
               <span>{ingredient.name}</span>
 
               <span className="text-muted-foreground text-sm">
@@ -199,10 +189,7 @@ export default function MyRecipePage() {
         </div>
 
         <span>
-          By{' '}
-          <strong className="text-foreground">
-            {recipe.user.displayName ?? recipe.user.username}
-          </strong>
+          By <strong className="text-foreground">{recipe.user.displayName ?? recipe.user.username}</strong>
         </span>
       </div>
     </div>

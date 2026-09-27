@@ -18,8 +18,9 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useIngredients } from '@/hooks/useIngredients';
 import { useTags } from '@/hooks/useTags';
+import type { RecipesType } from '@/contracts/recipe';
 
-export default function RecipeFilters({ type = 'all' }: { type?: 'all' | 'mine' }) {
+export default function RecipeFilters({ type = 'all' }: { type?: RecipesType }) {
   const [open, setOpen] = useState(false);
 
   const { ingredientsList } = useIngredients();

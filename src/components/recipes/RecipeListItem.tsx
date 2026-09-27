@@ -1,12 +1,13 @@
 import { Link } from 'react-router';
 
-import type { RecipeListItem } from '../../contracts/recipe';
+import type { RecipeListItem, RecipesType } from '../../contracts/recipe';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
+import { getRecipesPath } from '@/lib/recipe-routes';
 
-export default function RecipeListItem({ recipe, type = 'all' }: { recipe: RecipeListItem; type: 'all' | 'mine' }) {
-  const recipesPath = type === 'all' ? `/recipes` : `/recipes/mine`;
+export default function RecipeListItem({ recipe, type = 'all' }: { recipe: RecipeListItem; type: RecipesType }) {
+  const recipesPath = getRecipesPath(type);
 
   return (
     <Card className="rounded-t-9xl rounded-b-7xl flex h-full flex-col overflow-hidden pt-0 shadow-md shadow-orange-900/10">

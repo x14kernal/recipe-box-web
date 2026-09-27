@@ -24,7 +24,7 @@ type TPostFn = <TReq, TRes>(
   path: string,
   data: TReq,
   reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>,
+  resSchema: z.ZodType<TRes>
 ) => Promise<TRes>;
 
 const post: TPostFn = async (path, data, reqSchema, resSchema) => {
@@ -45,22 +45,20 @@ const post: TPostFn = async (path, data, reqSchema, resSchema) => {
 
 type TPatchFn = <TReq, TRes>(
   path: string,
-  data: TReq,
-  reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>,
+  data: TReq | undefined,
+  reqSchema: z.ZodType<TReq> | undefined,
+  resSchema: z.ZodType<TRes>
 ) => Promise<TRes>;
 
 const patch: TPatchFn = async (path, data, reqSchema, resSchema) => {
-  // check data aginst reqSchema before calling request
-  const test = z.safeParse(reqSchema, data);
-  if (!test.success) throw test.error;
+  const options: RequestInit = { method: 'PATCH', headers: { 'Content-Type': 'application/json' } };
 
-  // if has valid data go
-  const options = {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(test.data),
-  };
+  if (data !== undefined && reqSchema !== undefined) {
+    const test = z.safeParse(reqSchema, data);
+    if (!test.success) throw test.error;
+    options.body = JSON.stringify(test.data);
+  }
+
   return request(path, resSchema, options);
 };
 
