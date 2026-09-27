@@ -34,7 +34,9 @@ export function toUpdateRecipe(form: RecipeForm, initRecipe: Recipe): UpdateReci
 
   const ingredChanged =
     JSON.stringify(form.ingredients) !==
-    JSON.stringify(initRecipe.ingredients.map(({ id, quantity, unit }) => ({ id, quantity, unit })));
+    JSON.stringify(
+      initRecipe.ingredients.map(({ id, quantity, unit }) => ({ id, quantity, unit })),
+    );
 
   const stepsChanged =
     JSON.stringify(form.steps) !==
@@ -42,13 +44,15 @@ export function toUpdateRecipe(form: RecipeForm, initRecipe: Recipe): UpdateReci
       initRecipe.steps.map(({ description, image }) => ({
         description,
         image: image ?? null,
-      }))
+      })),
     );
 
-  const tagsChanged = JSON.stringify(form.tags) !== JSON.stringify(initRecipe.tags.map(({ id }) => ({ id })));
+  const tagsChanged =
+    JSON.stringify(form.tags) !== JSON.stringify(initRecipe.tags.map(({ id }) => ({ id })));
 
   const imagesChanged =
-    JSON.stringify(form.images) !== JSON.stringify(initRecipe.images.map(({ imageUrl }) => ({ imageUrl })));
+    JSON.stringify(form.images) !==
+    JSON.stringify(initRecipe.images.map(({ imageUrl }) => ({ imageUrl })));
 
   return {
     ...(titleChanged && { title: form.title }),

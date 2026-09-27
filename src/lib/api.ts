@@ -24,7 +24,7 @@ type TPostFn = <TReq, TRes>(
   path: string,
   data: TReq,
   reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>
+  resSchema: z.ZodType<TRes>,
 ) => Promise<TRes>;
 
 const post: TPostFn = async (path, data, reqSchema, resSchema) => {
@@ -47,7 +47,7 @@ type TPatchFn = <TReq, TRes>(
   path: string,
   data: TReq,
   reqSchema: z.ZodType<TReq>,
-  resSchema: z.ZodType<TRes>
+  resSchema: z.ZodType<TRes>,
 ) => Promise<TRes>;
 
 const patch: TPatchFn = async (path, data, reqSchema, resSchema) => {

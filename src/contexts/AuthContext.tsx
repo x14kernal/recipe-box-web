@@ -1,6 +1,7 @@
 import { createContext, type ReactNode, useEffect, useContext, useReducer } from 'react';
-import type { LoginUser, RegisterUser, User } from '../contracts/user';
+
 import { auth } from '../api/auth';
+import type { LoginUser, RegisterUser, User } from '../contracts/user';
 
 type AuthContextType = {
   user: User | null;
@@ -88,7 +89,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register: AuthContextType['register'] = async ({ email, password, username, displayName }) => {
+  const register: AuthContextType['register'] = async ({
+    email,
+    password,
+    username,
+    displayName,
+  }) => {
     dispatch({ type: 'REGISTER_START' });
     try {
       const res = await auth.register({ username, email, password, displayName });
@@ -126,7 +132,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     verifyAuth();
   }, []);
 
-  return <AuthContext.Provider value={{ ...state, login, register, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ ...state, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 // oxlint-disable-next-line react/only-export-components

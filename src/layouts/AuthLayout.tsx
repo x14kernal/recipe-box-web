@@ -1,7 +1,9 @@
 import { Navigate, Outlet } from 'react-router';
+
+import { Skeleton } from '@/components/ui/skeleton';
+
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AuthLayout() {
   const { user, loading } = useAuth();

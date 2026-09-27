@@ -1,15 +1,16 @@
 import { Link } from 'react-router';
+
 import type { RecipeListItem } from '../../contracts/recipe';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
-import { Badge } from '../ui/badge';
 import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../ui/card';
 
 export default function RecipeListItem({ recipe }: { recipe: RecipeListItem }) {
   const recipesPath = recipe.visibility === 'public' ? `/recipes` : `/recipes/mine`;
 
   return (
-    <Card className="flex h-full flex-col overflow-hidden pt-0 rounded-t-9xl rounded-b-7xl shadow-md shadow-orange-900/10">
-      <div className="relative h-48 w-full overflow-hidden bg-muted rounded-b-8xl">
+    <Card className="rounded-t-9xl rounded-b-7xl flex h-full flex-col overflow-hidden pt-0 shadow-md shadow-orange-900/10">
+      <div className="bg-muted rounded-b-8xl relative h-48 w-full overflow-hidden">
         {recipe.coverImage ? (
           <img
             src={recipe.coverImage.imageUrl}
@@ -23,7 +24,10 @@ export default function RecipeListItem({ recipe }: { recipe: RecipeListItem }) {
         )}
 
         <div className="absolute inset-x-0 top-0 flex justify-end bg-linear-to-b from-black/30 to-transparent p-3">
-          <Badge variant="secondary" className="border-0 bg-background/90 shadow-sm backdrop-blur-lg">
+          <Badge
+            variant="secondary"
+            className="bg-background/90 border-0 shadow-sm backdrop-blur-lg"
+          >
             {recipe.servingSize}
             <span className="ml-1">{recipe.servingSize === 1 ? 'serving' : 'servings'}</span>
           </Badge>
@@ -44,13 +48,17 @@ export default function RecipeListItem({ recipe }: { recipe: RecipeListItem }) {
         ))}
       </CardContent>
 
-      <CardFooter className="mt-auto flex flex-wrap justify-between items-center gap-2">
+      <CardFooter className="mt-auto flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Avatar className="size-6">
-            <AvatarFallback>{(recipe.user.displayName ?? recipe.user.username)[0].toUpperCase()}</AvatarFallback>
+            <AvatarFallback>
+              {(recipe.user.displayName ?? recipe.user.username)[0].toUpperCase()}
+            </AvatarFallback>
           </Avatar>
 
-          <span className="text-sm font-medium">{recipe.user.displayName ?? recipe.user.username}</span>
+          <span className="text-sm font-medium">
+            {recipe.user.displayName ?? recipe.user.username}
+          </span>
         </div>
 
         <span className="text-muted-foreground">

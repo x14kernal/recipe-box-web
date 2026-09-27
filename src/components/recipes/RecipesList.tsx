@@ -1,10 +1,12 @@
 import { useNavigate } from 'react-router';
-import { useRecipes } from '../../hooks/useRecipes';
-import RecipeListItem from './RecipeListItem';
+
 import { Button } from '@/components/ui/button';
+
+import { useRecipes } from '../../hooks/useRecipes';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Skeleton } from '../ui/skeleton';
 import RecipeFilters from './RecipeFilters';
+import RecipeListItem from './RecipeListItem';
 
 export default function RecipesList({ type = 'all' }: { type?: 'all' | 'mine' }) {
   const { recipesList, recipesMeta, loading, error } = useRecipes(type);

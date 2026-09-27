@@ -1,5 +1,5 @@
-import { Form, Link, useNavigate } from 'react-router';
 import { Menu, Search } from 'lucide-react';
+import { Form, Link, useNavigate } from 'react-router';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   return (
-    <nav className="sticky top-4 z-50 mx-auto mt-4 flex w-[calc(100%-1rem)] max-w-5xl items-center gap-4 rounded-2xl border border-orange-200/50 bg-background/70 px-5 py-3 shadow-sm shadow-orange-900/5 backdrop-blur-md dark:border-orange-900/30">
+    <nav className="bg-background/70 sticky top-4 z-50 mx-auto mt-4 flex w-[calc(100%-1rem)] max-w-5xl items-center gap-4 rounded-2xl border border-orange-200/50 px-5 py-3 shadow-sm shadow-orange-900/5 backdrop-blur-md dark:border-orange-900/30">
       <Link to="/" className="shrink-0 font-black tracking-tight">
         RECIPES-X
       </Link>
@@ -20,7 +20,7 @@ export default function Navbar() {
       {/* Desktop search */}
       <Form method="get" action="/recipes" className="hidden flex-1 sm:flex">
         <div className="relative w-full max-w-md">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 
           <Input name="search" placeholder="Search recipes..." className="pl-9" />
         </div>
@@ -53,7 +53,7 @@ export default function Navbar() {
       <div className="ml-auto sm:hidden">
         <Sheet>
           <SheetTrigger
-            className="inline-flex size-9 items-center justify-center rounded-md border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"
+            className="bg-background hover:bg-accent hover:text-accent-foreground inline-flex size-9 items-center justify-center rounded-md border shadow-xs"
             aria-label="Open menu"
           >
             <Menu className="size-4" />
@@ -67,7 +67,7 @@ export default function Navbar() {
             <div className="flex flex-col gap-4 px-4">
               <Form method="get" action="/recipes">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
 
                   <Input name="search" placeholder="Search recipes..." className="pl-9" />
                 </div>

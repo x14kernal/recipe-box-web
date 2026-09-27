@@ -14,7 +14,8 @@ const random = async () => api.get('/recipes/random', recipeResSchema);
 
 const one = async (id: string, path = '/recipes') => api.get(`${path}/${id}`, recipeResSchema);
 
-const create = async (data: CreateRecipe) => api.post('/recipes', data, createRecipeSchema, recipeResSchema);
+const create = async (data: CreateRecipe) =>
+  api.post('/recipes', data, createRecipeSchema, recipeResSchema);
 
 const update = async (id: string, data: UpdateRecipe) =>
   api.patch(`/recipes/${id}`, data, updateRecipeSchema, recipeResSchema);

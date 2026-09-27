@@ -1,9 +1,8 @@
+import { Filter } from 'lucide-react';
 import { useState } from 'react';
 import { Form, useSearchParams, useSubmit } from 'react-router';
-import { Filter } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Combobox,
   ComboboxChip,
@@ -15,8 +14,8 @@ import {
   ComboboxList,
   ComboboxValue,
 } from '@/components/ui/combobox';
+import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-
 import { useIngredients } from '@/hooks/useIngredients';
 import { useTags } from '@/hooks/useTags';
 
@@ -73,7 +72,7 @@ export default function RecipeFilters() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm font-medium shadow-xs hover:bg-accent">
+      <SheetTrigger className="bg-background hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-xs">
         <Filter className="size-4" />
         Filters
       </SheetTrigger>
@@ -83,8 +82,17 @@ export default function RecipeFilters() {
           <SheetTitle>Filter recipes</SheetTitle>
         </SheetHeader>
 
-        <Form method="get" action="/recipes" onSubmit={handleSubmit} className="flex flex-col gap-6 px-4">
-          <Input name="search" placeholder="Search recipes..." defaultValue={searchParams.get('search') ?? ''} />
+        <Form
+          method="get"
+          action="/recipes"
+          onSubmit={handleSubmit}
+          className="flex flex-col gap-6 px-4"
+        >
+          <Input
+            name="search"
+            placeholder="Search recipes..."
+            defaultValue={searchParams.get('search') ?? ''}
+          />
 
           {/* Ingredients */}
           <Combobox
@@ -95,7 +103,9 @@ export default function RecipeFilters() {
           >
             <ComboboxChips>
               <ComboboxValue>
-                {(values: string[]) => values.map((value) => <ComboboxChip key={value}>{value}</ComboboxChip>)}
+                {(values: string[]) =>
+                  values.map((value) => <ComboboxChip key={value}>{value}</ComboboxChip>)
+                }
               </ComboboxValue>
 
               <ComboboxChipsInput placeholder="Search ingredients..." />
@@ -115,7 +125,12 @@ export default function RecipeFilters() {
           </Combobox>
 
           {/* Tags */}
-          <Combobox multiple value={tags} onValueChange={setTags} items={tagsList.map((item) => item.slug)}>
+          <Combobox
+            multiple
+            value={tags}
+            onValueChange={setTags}
+            items={tagsList.map((item) => item.slug)}
+          >
             <ComboboxChips>
               <ComboboxValue>
                 {(values: string[]) =>

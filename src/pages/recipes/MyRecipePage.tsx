@@ -1,17 +1,16 @@
+import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
-
-import { useRecipe } from '../../hooks/useRecipe';
-import { useAuth } from '../../contexts/AuthContext';
-import { recipe as recipeApi } from '../../api/recipe';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
-
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
+
+import { recipe as recipeApi } from '../../api/recipe';
+import { useAuth } from '../../contexts/AuthContext';
+import { useRecipe } from '../../hooks/useRecipe';
 
 export default function MyRecipePage() {
   const { id } = useParams();
@@ -94,19 +93,26 @@ export default function MyRecipePage() {
           <div>
             <h1 className="text-4xl font-bold tracking-tight">{recipe.title}</h1>
 
-            <p className="mt-2 text-muted-foreground">
+            <p className="text-muted-foreground mt-2">
               {recipe.servingSize} {recipe.servingSize === 1 ? 'serving' : 'servings'}
             </p>
           </div>
 
           {isOwner && (
             <div className="flex gap-2">
-              <Link to={`/recipes/${recipe.id}/edit`} className={buttonVariants({ variant: 'outline' })}>
+              <Link
+                to={`/recipes/${recipe.id}/edit`}
+                className={buttonVariants({ variant: 'outline' })}
+              >
                 <Pencil />
                 Edit
               </Link>
 
-              <Button variant="destructive" disabled={loadingDelete} onClick={() => handleDelete(recipe.id)}>
+              <Button
+                variant="destructive"
+                disabled={loadingDelete}
+                onClick={() => handleDelete(recipe.id)}
+              >
                 <Trash2 />
                 {loadingDelete ? 'Deleting...' : 'Delete'}
               </Button>
@@ -144,10 +150,13 @@ export default function MyRecipePage() {
 
         <ul className="grid gap-2 sm:grid-cols-2">
           {recipe.ingredients.map((ingredient) => (
-            <li key={ingredient.id} className="flex items-center justify-between rounded-lg bg-muted/40 px-4 py-3">
+            <li
+              key={ingredient.id}
+              className="bg-muted/40 flex items-center justify-between rounded-lg px-4 py-3"
+            >
               <span>{ingredient.name}</span>
 
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 {ingredient.quantity} {ingredient.unit}
               </span>
             </li>
@@ -164,12 +173,12 @@ export default function MyRecipePage() {
         <ol className="space-y-6">
           {recipe.steps.map((step) => (
             <li key={step.id} className="flex gap-4">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+              <div className="bg-primary text-primary-foreground flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-semibold">
                 {step.position}
               </div>
 
               <div className="flex-1 space-y-3">
-                <p className="leading-7 text-foreground/90">{step.description}</p>
+                <p className="text-foreground/90 leading-7">{step.description}</p>
 
                 {step.image && (
                   <img
@@ -184,13 +193,16 @@ export default function MyRecipePage() {
         </ol>
       </section>
 
-      <div className="flex items-center gap-3 border-t pt-6 text-sm text-muted-foreground">
-        <div className="flex size-9 items-center justify-center rounded-full bg-muted font-medium text-foreground">
+      <div className="text-muted-foreground flex items-center gap-3 border-t pt-6 text-sm">
+        <div className="bg-muted text-foreground flex size-9 items-center justify-center rounded-full font-medium">
           {(recipe.user.displayName ?? recipe.user.username)[0].toUpperCase()}
         </div>
 
         <span>
-          By <strong className="text-foreground">{recipe.user.displayName ?? recipe.user.username}</strong>
+          By{' '}
+          <strong className="text-foreground">
+            {recipe.user.displayName ?? recipe.user.username}
+          </strong>
         </span>
       </div>
     </div>
