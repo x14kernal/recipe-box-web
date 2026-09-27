@@ -1,4 +1,5 @@
 import { useState, type SubmitEvent } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -150,7 +151,7 @@ export default function LoginForm() {
         />
 
         {errors.identifier && (
-          <p id="identifier-error" className="text-sm text-destructive">
+          <p id="identifier-error" className="text-destructive text-sm">
             {errors.identifier}
           </p>
         )}
@@ -171,7 +172,7 @@ export default function LoginForm() {
         />
 
         {errors.password && (
-          <p id="password-error" className="text-sm text-destructive">
+          <p id="password-error" className="text-destructive text-sm">
             {errors.password}
           </p>
         )}
@@ -180,7 +181,7 @@ export default function LoginForm() {
       {errors.form && (
         <p
           role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm"
         >
           {errors.form}
         </p>

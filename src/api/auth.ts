@@ -1,5 +1,3 @@
-import { api } from '../lib/api';
-
 import {
   loginResSchema,
   loginSchema,
@@ -11,6 +9,7 @@ import {
   type LoginUser,
   type RegisterUser,
 } from '../contracts/user';
+import { api } from '../lib/api';
 
 const register = async (data: RegisterUser) => {
   return api.post('/auth/register', data, registerSchema, registerResSchema);

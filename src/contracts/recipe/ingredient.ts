@@ -1,6 +1,7 @@
 import z from 'zod';
-import { idSchema } from './common';
+
 import { responseSchema } from '../api';
+import { idSchema } from './common';
 
 export const ingredientSchema = z.object({
   id: idSchema,
@@ -21,9 +22,14 @@ export const newRecipeIngredientSchema = z
   })
   .extend(recipeIngredientAmountSchema.shape);
 
-export const existingRecipeIngredientSchema = z.object({ id: idSchema }).extend(recipeIngredientAmountSchema.shape);
+export const existingRecipeIngredientSchema = z
+  .object({ id: idSchema })
+  .extend(recipeIngredientAmountSchema.shape);
 
-export const recipeIngredientInputSchema = z.union([newRecipeIngredientSchema, existingRecipeIngredientSchema]);
+export const recipeIngredientInputSchema = z.union([
+  newRecipeIngredientSchema,
+  existingRecipeIngredientSchema,
+]);
 
 export type Ingredient = z.infer<typeof ingredientSchema>;
 export type NewRecipeIngredient = z.infer<typeof newRecipeIngredientSchema>;

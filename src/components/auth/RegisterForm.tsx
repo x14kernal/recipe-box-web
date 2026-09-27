@@ -144,7 +144,7 @@ export default function RegisterForm() {
         />
 
         {errors.displayName && (
-          <p id="displayName-error" className="text-sm text-destructive">
+          <p id="displayName-error" className="text-destructive text-sm">
             {errors.displayName}
           </p>
         )}
@@ -165,7 +165,7 @@ export default function RegisterForm() {
         />
 
         {errors.email && (
-          <p id="email-error" className="text-sm text-destructive">
+          <p id="email-error" className="text-destructive text-sm">
             {errors.email}
           </p>
         )}
@@ -186,7 +186,7 @@ export default function RegisterForm() {
         />
 
         {errors.username && (
-          <p id="username-error" className="text-sm text-destructive">
+          <p id="username-error" className="text-destructive text-sm">
             {errors.username}
           </p>
         )}
@@ -207,7 +207,7 @@ export default function RegisterForm() {
         />
 
         {errors.password && (
-          <p id="password-error" className="text-sm text-destructive">
+          <p id="password-error" className="text-destructive text-sm">
             {errors.password}
           </p>
         )}
@@ -216,7 +216,7 @@ export default function RegisterForm() {
       {errors.form && (
         <p
           role="alert"
-          className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className="border-destructive/30 bg-destructive/10 text-destructive rounded-md border px-3 py-2 text-sm"
         >
           {errors.form}
         </p>

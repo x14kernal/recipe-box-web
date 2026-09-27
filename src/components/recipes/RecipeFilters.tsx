@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { Form, useSearchParams, useSubmit } from 'react-router';
 import { Filter } from 'lucide-react';
+import { useState, type SubmitEvent } from 'react';
+import { Form, useSearchParams, useSubmit } from 'react-router';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
   Combobox,
   ComboboxChip,
@@ -15,12 +14,12 @@ import {
   ComboboxList,
   ComboboxValue,
 } from '@/components/ui/combobox';
+import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-
 import { useIngredients } from '@/hooks/useIngredients';
 import { useTags } from '@/hooks/useTags';
 
-export default function RecipeFilters() {
+export default function RecipeFilters({ type = 'all' }: { type?: 'all' | 'mine' }) {
   const [open, setOpen] = useState(false);
 
   const { ingredientsList } = useIngredients();
@@ -33,7 +32,7 @@ export default function RecipeFilters() {
 
   const [tags, setTags] = useState(searchParams.get('tags')?.split(',') ?? []);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -55,7 +54,7 @@ export default function RecipeFilters() {
 
     submit(params, {
       method: 'get',
-      action: '/recipes',
+      action: type === 'all' ? '/recipes' : '/recipes/mine',
     });
     setOpen(false);
   }
@@ -73,14 +72,14 @@ export default function RecipeFilters() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm font-medium shadow-xs hover:bg-accent">
+      <SheetTrigger className="bg-background hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium shadow-xs">
         <Filter className="size-4" />
         Filters
       </SheetTrigger>
 
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Filter recipes</SheetTitle>
+          <SheetTitle>Filter {type === 'mine' && 'your'} recipes</SheetTitle>
         </SheetHeader>
 
         <Form method="get" action="/recipes" onSubmit={handleSubmit} className="flex flex-col gap-6 px-4">

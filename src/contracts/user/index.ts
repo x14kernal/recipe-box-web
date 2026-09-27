@@ -1,4 +1,5 @@
 import z from 'zod';
+
 import { responseSchema, responseWithoutDataSchema } from '../api/index';
 
 const userBaseSchema = z.object({

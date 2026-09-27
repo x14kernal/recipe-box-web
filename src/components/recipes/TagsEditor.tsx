@@ -1,10 +1,5 @@
-import { type Dispatch, type SetStateAction, useState } from 'react';
 import { Plus, X } from 'lucide-react';
-
-import type { Tag, RecipeTagInput } from '../../contracts/recipe/tag';
-import type { RecipeForm } from '../../contracts/recipe';
-
-import { useTags } from '../../hooks/useTags';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,6 +12,10 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox';
 import { Label } from '@/components/ui/label';
+
+import type { RecipeForm } from '../../contracts/recipe';
+import type { Tag, RecipeTagInput } from '../../contracts/recipe/tag';
+import { useTags } from '../../hooks/useTags';
 
 type FormErrors = {
   ingredients: Record<string, Record<string, string>>;
@@ -62,7 +61,7 @@ export default function TagsEditor({ recipeTags, onChange, errors, onError }: Ta
       const tags = Object.fromEntries(
         Object.entries(prev.tags)
           .filter(([key]) => key !== String(index))
-          .map(([_, value], i) => [i, value])
+          .map(([_, value], i) => [i, value]),
       );
 
       return {
@@ -73,11 +72,13 @@ export default function TagsEditor({ recipeTags, onChange, errors, onError }: Ta
   }
 
   return (
-    <Card className="border-border/60 bg-muted/30 shadow-sm rounded-7xl">
+    <Card className="border-border/60 bg-muted/30 rounded-7xl shadow-sm">
       <CardHeader>
         <CardTitle>Tags</CardTitle>
 
-        <p className="text-sm text-muted-foreground">Add tags to help categorize and find your recipe.</p>
+        <p className="text-muted-foreground text-sm">
+          Add tags to help categorize and find your recipe.
+        </p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -132,18 +133,24 @@ function TagInput({
 
   const availableTags = tagsList.filter((tag) => {
     return !recipeTags.some(
-      (selectedTag, selectedIndex) => selectedIndex !== index && 'id' in selectedTag && selectedTag.id === tag.id
+      (selectedTag, selectedIndex) =>
+        selectedIndex !== index && 'id' in selectedTag && selectedTag.id === tag.id,
     );
   });
 
   const selectedName =
-    'name' in recipeTag ? recipeTag.name : (tagsList.find((tag) => tag.id === recipeTag.id)?.name ?? '');
+    'name' in recipeTag
+      ? recipeTag.name
+      : (tagsList.find((tag) => tag.id === recipeTag.id)?.name ?? '');
 
   const search = inputValue.trim().toLowerCase();
 
-  const filteredTags = search ? availableTags.filter((tag) => tag.name.toLowerCase().includes(search)) : availableTags;
+  const filteredTags = search
+    ? availableTags.filter((tag) => tag.name.toLowerCase().includes(search))
+    : availableTags;
 
-  const canCreate = search.length > 0 && !availableTags.some((tag) => tag.name.toLowerCase() === search);
+  const canCreate =
+    search.length > 0 && !availableTags.some((tag) => tag.name.toLowerCase() === search);
 
   function handleValueChange(value: string | null) {
     if (!value) return;
@@ -188,7 +195,7 @@ function TagInput({
           <ComboboxContent>
             <ComboboxList>
               {isTagsListLoading ? (
-                <div className="px-3 py-2 text-sm text-muted-foreground">Loading tags...</div>
+                <div className="text-muted-foreground px-3 py-2 text-sm">Loading tags...</div>
               ) : (
                 <>
                   {filteredTags.map((tag) => (
@@ -204,14 +211,16 @@ function TagInput({
                     </ComboboxItem>
                   )}
 
-                  {!canCreate && filteredTags.length === 0 && <ComboboxEmpty>No tags found.</ComboboxEmpty>}
+                  {!canCreate && filteredTags.length === 0 && (
+                    <ComboboxEmpty>No tags found.</ComboboxEmpty>
+                  )}
                 </>
               )}
             </ComboboxList>
           </ComboboxContent>
         </Combobox>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && <p className="text-destructive text-sm">{error}</p>}
       </div>
 
       {index > 0 && (
@@ -219,7 +228,7 @@ function TagInput({
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute right-0 top-7 size-8 text-muted-foreground hover:text-destructive"
+          className="text-muted-foreground hover:text-destructive absolute top-7 right-0 size-8"
           onClick={() => onRemove(index)}
           aria-label={`Remove tag ${index + 1}`}
         >

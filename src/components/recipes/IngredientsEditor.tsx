@@ -1,14 +1,7 @@
-import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Check, Plus, X } from 'lucide-react';
-
-import type { Ingredient, RecipeIngredientInput } from '../../contracts/recipe/ingredient';
-import type { RecipeForm } from '../../contracts/recipe';
-
-import { useIngredients } from '../../hooks/useIngredients';
+import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Combobox,
   ComboboxContent,
@@ -17,6 +10,12 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+import type { RecipeForm } from '../../contracts/recipe';
+import type { Ingredient, RecipeIngredientInput } from '../../contracts/recipe/ingredient';
+import { useIngredients } from '../../hooks/useIngredients';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 
 type FormErrors = {
@@ -36,7 +35,12 @@ type IngredientsEditorProps = {
   onError: Dispatch<SetStateAction<FormErrors>>;
 };
 
-export default function IngredientsEditor({ recipeIngredients, onChange, errors, onError }: IngredientsEditorProps) {
+export default function IngredientsEditor({
+  recipeIngredients,
+  onChange,
+  errors,
+  onError,
+}: IngredientsEditorProps) {
   const { ingredientsList, loading } = useIngredients();
 
   function selectIngredient(index: number, value: { id: string } | { name: string }) {
@@ -115,7 +119,7 @@ export default function IngredientsEditor({ recipeIngredients, onChange, errors,
       const ingredients = Object.fromEntries(
         Object.entries(prev.ingredients)
           .filter(([key]) => key !== String(index))
-          .map(([_, value], i) => [i, value])
+          .map(([_, value], i) => [i, value]),
       );
 
       return {
@@ -126,10 +130,12 @@ export default function IngredientsEditor({ recipeIngredients, onChange, errors,
   }
 
   return (
-    <Card className="border-border/60 bg-muted/30 shadow-sm rounded-7xl">
+    <Card className="border-border/60 bg-muted/30 rounded-7xl shadow-sm">
       <CardHeader>
         <CardTitle>Ingredients</CardTitle>
-        <p className="text-sm text-muted-foreground">Add the ingredients and quantities needed for this recipe.</p>
+        <p className="text-muted-foreground text-sm">
+          Add the ingredients and quantities needed for this recipe.
+        </p>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -160,7 +166,11 @@ export default function IngredientsEditor({ recipeIngredients, onChange, errors,
 type IngredientInputProps = {
   index: number;
   recipeIngredient: RecipeIngredientInput;
-  onUpdate(index: number, field: 'name' | 'image' | 'quantity' | 'unit', value: string | number): void;
+  onUpdate(
+    index: number,
+    field: 'name' | 'image' | 'quantity' | 'unit',
+    value: string | number,
+  ): void;
   onSelect(index: number, value: { id: string } | { name: string }): void;
   onRemove: (index: number) => void;
   ingredientsList: Ingredient[];
@@ -189,7 +199,9 @@ function IngredientInput({
     return ingredientsList.filter((ingredient) => {
       return !recipeIngredients.some(
         (selectedIngredient, selectedIndex) =>
-          selectedIndex !== index && 'id' in selectedIngredient && selectedIngredient.id === ingredient.id
+          selectedIndex !== index &&
+          'id' in selectedIngredient &&
+          selectedIngredient.id === ingredient.id,
       );
     });
   }, [ingredientsList, recipeIngredients, index]);
@@ -201,7 +213,9 @@ function IngredientInput({
       return availableIngredients;
     }
 
-    return availableIngredients.filter((ingredient) => ingredient.name.toLowerCase().includes(value));
+    return availableIngredients.filter((ingredient) =>
+      ingredient.name.toLowerCase().includes(value),
+    );
   }, [availableIngredients, search]);
 
   const selectedId = 'id' in recipeIngredient ? recipeIngredient.id : undefined;
@@ -214,7 +228,8 @@ function IngredientInput({
 
   const currentValue = selectedId ?? selectedName ?? '';
 
-  const showCreate = !isIngredientsListLoading && search.trim().length > 0 && filteredIngredients.length === 0;
+  const showCreate =
+    !isIngredientsListLoading && search.trim().length > 0 && filteredIngredients.length === 0;
 
   useEffect(() => {
     if ('name' in recipeIngredient) {
@@ -252,12 +267,17 @@ function IngredientInput({
   }
 
   return (
-    <div className="relative rounded-5xl border border-border/50 p-4 pr-12 transition-colors hover:bg-muted/50 hover:shadow-sm">
+    <div className="rounded-5xl border-border/50 hover:bg-muted/50 relative border p-4 pr-12 transition-colors hover:shadow-sm">
       <div className="grid gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(100px,0.75fr)_minmax(120px,1fr)]">
         <div className="space-y-2">
           <Label htmlFor={`ingredient-${index}`}>Ingredient</Label>
 
-          <Combobox value={currentValue} onValueChange={handleSelect} open={open} onOpenChange={setOpen}>
+          <Combobox
+            value={currentValue}
+            onValueChange={handleSelect}
+            open={open}
+            onOpenChange={setOpen}
+          >
             <ComboboxInput
               id={`ingredient-${index}`}
               name={`ingredients[${index}][ingredient]`}
@@ -274,7 +294,9 @@ function IngredientInput({
             <ComboboxContent>
               <ComboboxList>
                 {isIngredientsListLoading && (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">Loading ingredients...</div>
+                  <div className="text-muted-foreground px-3 py-2 text-sm">
+                    Loading ingredients...
+                  </div>
                 )}
 
                 {!isIngredientsListLoading &&
@@ -282,7 +304,9 @@ function IngredientInput({
                     <ComboboxItem key={ingredient.id} value={ingredient.id}>
                       <span className="capitalize">{ingredient.name}</span>
 
-                      {selectedIngredient?.id === ingredient.id && <Check className="ml-auto size-4" />}
+                      {selectedIngredient?.id === ingredient.id && (
+                        <Check className="ml-auto size-4" />
+                      )}
                     </ComboboxItem>
                   ))}
 
@@ -293,7 +317,7 @@ function IngredientInput({
                 {showCreate && (
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-medium hover:bg-accent"
+                    className="hover:bg-accent flex w-full items-center gap-2 rounded-2xl px-3 py-2 text-left text-sm font-medium"
                     onClick={handleCreate}
                   >
                     <Plus className="size-4" />
@@ -304,7 +328,7 @@ function IngredientInput({
             </ComboboxContent>
           </Combobox>
 
-          {error?.name && <p className="text-sm text-destructive">{error.name}</p>}
+          {error?.name && <p className="text-destructive text-sm">{error.name}</p>}
         </div>
 
         <div className="space-y-2">
@@ -319,7 +343,7 @@ function IngredientInput({
             onChange={(event) => onUpdate(index, 'quantity', Number(event.target.value))}
           />
 
-          {error?.quantity && <p className="text-sm text-destructive">{error.quantity}</p>}
+          {error?.quantity && <p className="text-destructive text-sm">{error.quantity}</p>}
         </div>
 
         <div className="space-y-2">
@@ -334,7 +358,7 @@ function IngredientInput({
             onChange={(event) => onUpdate(index, 'unit', event.target.value)}
           />
 
-          {error?.unit && <p className="text-sm text-destructive">{error.unit}</p>}
+          {error?.unit && <p className="text-destructive text-sm">{error.unit}</p>}
         </div>
       </div>
 
@@ -351,7 +375,7 @@ function IngredientInput({
             onChange={(event) => onUpdate(index, 'image', event.target.value)}
           />
 
-          {error?.image && <p className="text-sm text-destructive">{error.image}</p>}
+          {error?.image && <p className="text-destructive text-sm">{error.image}</p>}
         </div>
       )}
 
@@ -360,7 +384,7 @@ function IngredientInput({
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2 size-8 text-muted-foreground hover:text-destructive"
+          className="text-muted-foreground hover:text-destructive absolute top-2 right-2 size-8"
           onClick={() => onRemove(index)}
           aria-label={`Remove ingredient ${index + 1}`}
         >

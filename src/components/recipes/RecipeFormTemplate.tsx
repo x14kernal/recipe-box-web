@@ -1,21 +1,25 @@
-import z from 'zod';
 import { useState, type SubmitEvent } from 'react';
-
-import { recipeFormSchema, type CreateRecipe, type RecipeForm } from '../../contracts/recipe';
-
-import { getZodError } from '../../lib/zod';
-
-import IngredientsEditor from './IngredientsEditor';
-import StepsEditor from './StepsEditor';
-import TagsEditor from './TagsEditor';
-import ImagesEditor from './ImagesEditor';
+import z from 'zod';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+import { recipeFormSchema, type CreateRecipe, type RecipeForm } from '../../contracts/recipe';
+import { getZodError } from '../../lib/zod';
+import ImagesEditor from './ImagesEditor';
+import IngredientsEditor from './IngredientsEditor';
+import StepsEditor from './StepsEditor';
+import TagsEditor from './TagsEditor';
 
 type FormErrors = {
   ingredients: Record<string, Record<string, string>>;
@@ -104,7 +108,7 @@ export default function RecipeFormTemplate({
       )}
 
       {/* Recipe details */}
-      <Card className="border-border/60 bg-muted/30 shadow-sm rounded-7xl">
+      <Card className="border-border/60 bg-muted/30 rounded-7xl shadow-sm">
         <CardHeader>
           <CardTitle>Recipe details</CardTitle>
         </CardHeader>
@@ -125,7 +129,7 @@ export default function RecipeFormTemplate({
               }
             />
 
-            {formErrors.title && <p className="text-sm text-destructive">{formErrors.title}</p>}
+            {formErrors.title && <p className="text-destructive text-sm">{formErrors.title}</p>}
           </div>
 
           <div className="space-y-2">
@@ -145,7 +149,9 @@ export default function RecipeFormTemplate({
               }
             />
 
-            {formErrors.servingSize && <p className="text-sm text-destructive">{formErrors.servingSize}</p>}
+            {formErrors.servingSize && (
+              <p className="text-destructive text-sm">{formErrors.servingSize}</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -170,7 +176,9 @@ export default function RecipeFormTemplate({
               </SelectContent>
             </Select>
 
-            {formErrors.visibility && <p className="text-sm text-destructive">{formErrors.visibility}</p>}
+            {formErrors.visibility && (
+              <p className="text-destructive text-sm">{formErrors.visibility}</p>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -192,7 +200,12 @@ export default function RecipeFormTemplate({
       />
 
       {/* Tags */}
-      <TagsEditor recipeTags={formData.tags} onChange={setFormData} errors={formErrors.tags} onError={setFormErrors} />
+      <TagsEditor
+        recipeTags={formData.tags}
+        onChange={setFormData}
+        errors={formErrors.tags}
+        onError={setFormErrors}
+      />
 
       {/* Photos */}
 
@@ -212,16 +225,22 @@ export default function RecipeFormTemplate({
   );
 }
 
-function getFormErrors(issues: z.ZodError['issues'], { ingredients, steps, tags, images }: CreateRecipe): FormErrors {
-  const ingredientErrors = ingredients.reduce<Record<string, Record<string, string>>>((errors, _, i) => {
-    errors[i] = {
-      quantity: getZodError(issues, 'ingredients', i, 'quantity'),
-      unit: getZodError(issues, 'ingredients', i, 'unit'),
-      name: getZodError(issues, 'ingredients', i, 'name'),
-    };
+function getFormErrors(
+  issues: z.ZodError['issues'],
+  { ingredients, steps, tags, images }: CreateRecipe,
+): FormErrors {
+  const ingredientErrors = ingredients.reduce<Record<string, Record<string, string>>>(
+    (errors, _, i) => {
+      errors[i] = {
+        quantity: getZodError(issues, 'ingredients', i, 'quantity'),
+        unit: getZodError(issues, 'ingredients', i, 'unit'),
+        name: getZodError(issues, 'ingredients', i, 'name'),
+      };
 
-    return errors;
-  }, {});
+      return errors;
+    },
+    {},
+  );
 
   const stepErrors = steps.reduce<Record<string, Record<string, string>>>((errors, _, i) => {
     errors[i] = {
@@ -237,7 +256,7 @@ function getFormErrors(issues: z.ZodError['issues'], { ingredients, steps, tags,
       ...errors,
       [i]: getZodError(issues, 'tags', i),
     }),
-    {}
+    {},
   );
 
   const imageErrors = images.reduce(
@@ -245,7 +264,7 @@ function getFormErrors(issues: z.ZodError['issues'], { ingredients, steps, tags,
       ...errors,
       [i]: getZodError(issues, 'images', i),
     }),
-    {}
+    {},
   );
 
   return {

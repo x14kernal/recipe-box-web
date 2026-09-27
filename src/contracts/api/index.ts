@@ -1,4 +1,5 @@
 import z from 'zod';
+
 import { paginationSchema } from '../pagination/index';
 
 export const apiSuccessSchema = <T extends z.ZodType>(itemSchema: T) =>
