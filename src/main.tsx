@@ -20,37 +20,16 @@ const router = createBrowserRouter([
   {
     Component: RootLayout,
     children: [
-      {
-        index: true,
-        Component: RecipesPage,
-      },
-      {
-        path: 'recipes',
-        Component: RecipesPage,
-      },
-      {
-        path: 'recipes/mine',
-        Component: MyRecipesPage,
-      },
-      {
-        path: 'recipes/mine/:id',
-        Component: MyRecipePage,
-      },
-      {
-        path: 'recipes/:id',
-        Component: RecipePage,
-      },
+      { index: true, Component: RecipesPage },
+      { path: 'recipes', Component: RecipesPage },
+      { path: 'recipes/:id', Component: RecipePage },
       {
         Component: ProtectedLayout,
         children: [
-          {
-            path: 'recipes/new',
-            Component: NewRecipePage,
-          },
-          {
-            path: 'recipes/:id/edit',
-            Component: EditRecipePage,
-          },
+          { path: 'recipes/new', Component: NewRecipePage },
+          { path: 'recipes/mine', Component: MyRecipesPage },
+          { path: 'recipes/mine/:id', Component: MyRecipePage },
+          { path: 'recipes/:id/edit', Component: EditRecipePage },
         ],
       },
     ],
@@ -69,5 +48,5 @@ createRoot(document.getElementById('root')!).render(
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </StrictMode>,
+  </StrictMode>
 );

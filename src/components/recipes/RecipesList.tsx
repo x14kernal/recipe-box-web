@@ -16,7 +16,7 @@ export default function RecipesList({ type = 'all' }: { type?: 'all' | 'mine' })
     <div>
       {/* Filters + Pagination */}
       <div className="mb-8 flex items-center justify-between gap-4">
-        <RecipeFilters />
+        <RecipeFilters type={type} />
 
         <div className="flex gap-2">
           <Button
@@ -58,7 +58,7 @@ export default function RecipesList({ type = 'all' }: { type?: 'all' | 'mine' })
       {!loading && !error && recipesList.length > 0 && (
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recipesList.map((recipe) => (
-            <RecipeListItem key={recipe.id} recipe={recipe} />
+            <RecipeListItem key={recipe.id} recipe={recipe} type={type} />
           ))}
         </ul>
       )}
