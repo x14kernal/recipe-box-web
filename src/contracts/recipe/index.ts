@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { responseSchema, responseWithMetaSchema } from '../api/index.js';
+import { responseSchema, responseWithMetaSchema, responseWithoutDataSchema } from '../api/index.js';
 import { userSchema } from '../user/index.js';
 import { idSchema } from './common.js';
 import { newRecipeImageSchema, recipeImageSchema } from './image.js';
@@ -115,9 +115,16 @@ export type ListRecipesQuery = z.infer<typeof listRecipesQuerySchema>;
 // Responses
 // ---------------------------------------------------------------------------
 export const recipeResSchema = responseSchema(recipeSchema);
+
 export const recipesResSchema = responseWithMetaSchema(z.array(recipeListItemSchema));
+
+export const trashResSchema = responseWithoutDataSchema();
+export const restoreResSchema = responseWithoutDataSchema();
+
 export const recipeFormSchema = createRecipeSchema;
 
 export type RecipeRes = z.infer<typeof recipeResSchema>;
 export type RecipesRes = z.infer<typeof recipesResSchema>;
 export type RecipeForm = z.infer<typeof recipeFormSchema>;
+
+export type RecipesType = 'all' | 'mine' | 'trashed';

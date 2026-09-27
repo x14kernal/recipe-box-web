@@ -1,4 +1,4 @@
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { ArchiveRestore, ArrowLeft, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 
@@ -12,30 +12,30 @@ import { recipe as recipeApi } from '../../api/recipe';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRecipe } from '../../hooks/useRecipe';
 
-export default function RecipePage() {
+export default function MyTrashedRecipePage() {
   const { id } = useParams();
   const { user } = useAuth();
-  const { recipe, loading, error } = useRecipe(id!);
+  const { recipe, loading, error } = useRecipe(id!, 'trashed');
 
-  const [isMoveToTrash, setIsMoveToTrash] = useState(false);
-  const [trashError, setTrashError] = useState<string | null>(null);
+  const [isRestoring, setIsRestoring] = useState(false);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
 
   const location = useLocation();
   const navigate = useNavigate();
 
   const success = location.state?.success;
 
-  async function handleMoveToTrash(id: string) {
-    setIsMoveToTrash(true);
-    setTrashError(null);
+  async function handleRestore(id: string) {
+    setIsRestoring(true);
+    setRestoreError(null);
 
     try {
-      await recipeApi.trash(id);
+      await recipeApi.restore(id);
       navigate('/recipes/trash');
     } catch (error) {
-      setTrashError(error instanceof Error ? error.message : 'Failed to move recipe into trash');
+      setRestoreError(error instanceof Error ? error.message : 'Failed to restore recipe');
     } finally {
-      setIsMoveToTrash(false);
+      setIsRestoring(false);
     }
   }
 
@@ -70,7 +70,7 @@ export default function RecipePage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8">
-      <Link to="/recipes" className={buttonVariants({ variant: 'ghost' })}>
+      <Link to="/recipes/mine" className={buttonVariants({ variant: 'ghost' })}>
         <ArrowLeft />
         Back to recipes
       </Link>
@@ -81,10 +81,10 @@ export default function RecipePage() {
         </Alert>
       )}
 
-      {trashError && (
+      {restoreError && (
         <Alert variant="destructive">
-          <AlertTitle>Move to trash failed</AlertTitle>
-          <AlertDescription>{trashError}</AlertDescription>
+          <AlertTitle>Restore failed</AlertTitle>
+          <AlertDescription>{restoreError}</AlertDescription>
         </Alert>
       )}
 
@@ -105,9 +105,9 @@ export default function RecipePage() {
                 Edit
               </Link>
 
-              <Button variant="destructive" disabled={isMoveToTrash} onClick={() => handleMoveToTrash(recipe.id)}>
-                <Trash2 />
-                {isMoveToTrash ? 'Trashing...' : 'Move to trash'}
+              <Button variant="secondary" disabled={isRestoring} onClick={() => handleRestore(recipe.id)}>
+                <ArchiveRestore />
+                {isRestoring ? 'Restoring...' : 'Restore'}
               </Button>
             </div>
           )}

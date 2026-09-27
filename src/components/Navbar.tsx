@@ -41,6 +41,10 @@ export default function Navbar() {
               My Recipes
             </Button>
 
+            <Button variant="ghost" onClick={() => navigate('/recipes/trash')}>
+              Trashed Recipes
+            </Button>
+
             <Button variant="ghost" onClick={() => navigate('/recipes/new')}>
               Add Recipe
             </Button>
@@ -75,7 +79,7 @@ export default function Navbar() {
               <SheetTitle>Recipes-X</SheetTitle>
             </SheetHeader>
 
-            <div className="flex flex-col gap-4 px-4  flex-1">
+            <div className="flex flex-col gap-4 px-4 flex-1">
               <Form method="get" action="/recipes">
                 <div className="relative">
                   <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
@@ -89,6 +93,9 @@ export default function Navbar() {
                   <div className="flex flex-col gap-2">
                     <Button variant="secondary" onClick={() => handleNavigate('/recipes/mine')}>
                       My Recipes
+                    </Button>
+                    <Button variant="secondary" onClick={() => handleNavigate('/recipes/trash')}>
+                      Trashed Recipes
                     </Button>
                     <Button variant="secondary" onClick={() => handleNavigate('/recipes/new')}>
                       Add Recipe

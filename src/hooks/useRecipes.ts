@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router';
 
 import { recipe as recipeApi } from '../api/recipe';
 import type { Pagination } from '../contracts/pagination';
-import type { RecipeListItem } from '../contracts/recipe';
+import type { RecipeListItem, RecipesType } from '../contracts/recipe';
+import { getRecipesPath } from '@/lib/recipe-routes';
 
-export function useRecipes(type: 'all' | 'mine' = 'all') {
+export function useRecipes(type: RecipesType = 'all') {
   const [searchParams] = useSearchParams();
 
   const [recipesList, setRecipesList] = useState<RecipeListItem[]>([]);
@@ -23,7 +24,7 @@ export function useRecipes(type: 'all' | 'mine' = 'all') {
   // Everything after "?" in the URL
   const queryString = searchParams.toString();
 
-  const path = type === 'all' ? '/recipes' : '/recipes/mine';
+  const path = getRecipesPath(type);
 
   useEffect(() => {
     const fetchRecipes = async () => {

@@ -15,6 +15,8 @@ import MyRecipesPage from './pages/recipes/MyRecipesPage';
 import NewRecipePage from './pages/recipes/NewRecipePage';
 import RecipePage from './pages/recipes/RecipePage';
 import RecipesPage from './pages/recipes/RecipesPage';
+import MyTrashedRecipesPage from './pages/recipes/MyTrashedRecipesPage';
+import MyTrashedRecipePage from './pages/recipes/MyTrashedRecipePage';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,8 @@ const router = createBrowserRouter([
           { path: 'recipes/new', Component: NewRecipePage },
           { path: 'recipes/mine', Component: MyRecipesPage },
           { path: 'recipes/mine/:id', Component: MyRecipePage },
+          { path: 'recipes/trash', Component: MyTrashedRecipesPage },
+          { path: 'recipes/trash/:id', Component: MyTrashedRecipePage },
           { path: 'recipes/:id/edit', Component: EditRecipePage },
         ],
       },

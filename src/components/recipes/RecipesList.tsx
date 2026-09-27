@@ -7,8 +7,9 @@ import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Skeleton } from '../ui/skeleton';
 import RecipeFilters from './RecipeFilters';
 import RecipeListItem from './RecipeListItem';
+import type { RecipesType } from '@/contracts/recipe';
 
-export default function RecipesList({ type = 'all' }: { type?: 'all' | 'mine' }) {
+export default function RecipesList({ type = 'all' }: { type?: RecipesType }) {
   const { recipesList, recipesMeta, loading, error } = useRecipes(type);
   const navigate = useNavigate();
 

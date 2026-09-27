@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { recipe as recipeApi } from '../api/recipe';
-import type { Recipe } from '../contracts/recipe';
+import type { Recipe, RecipesType } from '../contracts/recipe';
+import { getRecipesPath } from '@/lib/recipe-routes';
 
-export function useRecipe(id: string, type: 'all' | 'mine' = 'all') {
+export function useRecipe(id: string, type: RecipesType = 'all') {
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +15,7 @@ export function useRecipe(id: string, type: 'all' | 'mine' = 'all') {
       setError(null);
 
       try {
-        const res = await recipeApi.one(id, `${type === 'mine' ? '/recipes/mine' : '/recipes'}`);
+        const res = await recipeApi.one(id, getRecipesPath(type));
         if (!res.success) throw new Error(`${res.error.code} ${res.error.message}`);
 
         setRecipe(res.data);
