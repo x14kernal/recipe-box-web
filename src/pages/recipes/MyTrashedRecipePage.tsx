@@ -1,4 +1,4 @@
-import { ArchiveRestore, ArrowLeft, Pencil, Trash2 } from 'lucide-react';
+import { ArchiveRestore, ArrowLeft, Pencil } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 
