@@ -1,4 +1,4 @@
-import { ArchiveRestore, ArrowLeft, Pencil } from 'lucide-react';
+import { ArchiveRestore, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 
@@ -100,11 +100,7 @@ export default function MyTrashedRecipePage() {
 
           {isOwner && (
             <div className="flex gap-2">
-              <Link to={`/recipes/${recipe.id}/edit`} className={buttonVariants({ variant: 'outline' })}>
-                <Pencil />
-                Edit
-              </Link>
-
+              {/* Maybe I'll add here detele button after refactor backend, maybe not! */}
               <Button variant="secondary" disabled={isRestoring} onClick={() => handleRestore(recipe.id)}>
                 <ArchiveRestore />
                 {isRestoring ? 'Restoring...' : 'Restore'}
