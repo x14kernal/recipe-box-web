@@ -17,6 +17,7 @@ import RecipePage from './pages/recipes/RecipePage';
 import RecipesPage from './pages/recipes/RecipesPage';
 import MyTrashedRecipesPage from './pages/recipes/MyTrashedRecipesPage';
 import MyTrashedRecipePage from './pages/recipes/MyTrashedRecipePage';
+import BookmarksPage from './pages/recipes/BookmarksPage';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,7 @@ const router = createBrowserRouter([
         Component: ProtectedLayout,
         children: [
           { path: 'recipes/new', Component: NewRecipePage },
+          { path: 'recipes/bookmarks', Component: BookmarksPage },
           { path: 'recipes/mine', Component: MyRecipesPage },
           { path: 'recipes/mine/:id', Component: MyRecipePage },
           { path: 'recipes/trash', Component: MyTrashedRecipesPage },

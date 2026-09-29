@@ -19,6 +19,7 @@ export function useRecipe(id: string, type: RecipesType = 'all') {
         if (!res.success) throw new Error(`${res.error.code} ${res.error.message}`);
 
         setRecipe(res.data);
+        return res.data;
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Something went wrong!');
       } finally {
