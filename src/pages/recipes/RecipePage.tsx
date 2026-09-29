@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { recipe as recipeApi } from '../../api/recipe';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRecipe } from '../../hooks/useRecipe';
+import { PageHeader } from '@/components/PageHeader';
 
 export default function RecipePage() {
   const { id } = useParams();
@@ -126,13 +127,11 @@ export default function RecipePage() {
 
       <div className="space-y-4">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight">{recipe.title}</h1>
-
-            <p className="text-muted-foreground mt-2">
-              {recipe.servingSize} {recipe.servingSize === 1 ? 'serving' : 'servings'}
-            </p>
-          </div>
+          <PageHeader
+            eyebrow="Recipe"
+            title={recipe.title}
+            description={`${recipe.servingSize} ${recipe.servingSize === 1 ? 'serving' : 'servings'}`}
+          />
 
           {!isOwner && (
             <Button

@@ -10,7 +10,7 @@ export default function AuthLayout() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center px-4">
         <Skeleton className="h-6 w-24" />
       </div>
     );
@@ -24,7 +24,7 @@ export default function AuthLayout() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="flex flex-1 items-center justify-center px-4 py-12">
+      <main className="flex flex-1 items-center justify-center px-4 py-16 sm:py-20 md:py-24">
         <section className="w-full max-w-md">
           <Outlet />
         </section>

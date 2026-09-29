@@ -3,6 +3,7 @@ import { Navigate, useParams } from 'react-router';
 import EditRecipeForm from '../../components/recipes/EditRecipeForm';
 import { useAuth } from '../../contexts/AuthContext';
 import { useRecipe } from '../../hooks/useRecipe';
+import { PageHeader } from '@/components/PageHeader';
 
 export default function EditRecipePage() {
   const { id } = useParams();
@@ -27,13 +28,11 @@ export default function EditRecipePage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Update recipe</h1>
-
-        <p className="text-muted-foreground mt-1 text-sm">
-          Update your recipe details, ingredients, steps, and images.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Your recipes"
+        title="Update recipe"
+        description="Update your recipe details, ingredients, steps, and images."
+      />
 
       <EditRecipeForm recipe={recipe} />
     </div>
