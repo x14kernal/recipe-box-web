@@ -54,6 +54,8 @@ export const recipeSchema = z.object({
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
 
+  isBookmarked: z.boolean(),
+
   ingredients: z.array(ingredientSchema.extend({ quantity: z.number(), unit: z.string() })),
 
   steps: z.array(recipeStepSchema),
@@ -121,10 +123,12 @@ export const recipesResSchema = responseWithMetaSchema(z.array(recipeListItemSch
 export const trashResSchema = responseWithoutDataSchema();
 export const restoreResSchema = responseWithoutDataSchema();
 
+export const bookmarkResSchema = responseWithoutDataSchema();
+
 export const recipeFormSchema = createRecipeSchema;
 
 export type RecipeRes = z.infer<typeof recipeResSchema>;
 export type RecipesRes = z.infer<typeof recipesResSchema>;
 export type RecipeForm = z.infer<typeof recipeFormSchema>;
 
-export type RecipesType = 'all' | 'mine' | 'trashed';
+export type RecipesType = 'all' | 'mine' | 'trashed' | 'bookmarked';

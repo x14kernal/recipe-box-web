@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 
 import { recipe as recipeApi } from '../api/recipe';
+import { bookmark as bookmarkApi } from '../api/bookmark';
 import type { Pagination } from '../contracts/pagination';
 import type { RecipeListItem, RecipesType } from '../contracts/recipe';
 import { getRecipesPath } from '@/lib/recipe-routes';
@@ -34,7 +35,10 @@ export function useRecipes(type: RecipesType = 'all') {
       try {
         const url = queryString ? `${path}?${queryString}` : path;
 
-        const res = await recipeApi.all(url);
+        let res = null;
+
+        if (type === 'bookmarked') res = await bookmarkApi.all(url);
+        else res = await recipeApi.all(url);
 
         if (!res.success) {
           throw new Error(res.error.message);
@@ -45,6 +49,7 @@ export function useRecipes(type: RecipesType = 'all') {
         if (res.meta) {
           setRecipesMeta(res.meta);
         }
+        return res.data;
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Something went wrong');
       } finally {
@@ -53,7 +58,7 @@ export function useRecipes(type: RecipesType = 'all') {
     };
 
     fetchRecipes();
-  }, [path, queryString]);
+  }, [path, queryString, type]);
 
   return {
     recipesList,

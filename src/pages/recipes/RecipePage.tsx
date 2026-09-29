@@ -1,5 +1,5 @@
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Bookmark, BookmarkCheck, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -16,14 +16,16 @@ export default function RecipePage() {
   const { id } = useParams();
   const { user } = useAuth();
   const { recipe, loading, error } = useRecipe(id!);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const success = location.state?.success;
+
+  const [isBookmarked, setIsBookmarked] = useState(recipe?.isBookmarked ?? false);
+  const [isBookmarking, setIsBookmarking] = useState(false);
+  const [bookmarkError, setBookmarkError] = useState<string | null>(null);
 
   const [isMoveToTrash, setIsMoveToTrash] = useState(false);
   const [trashError, setTrashError] = useState<string | null>(null);
-
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const success = location.state?.success;
 
   async function handleMoveToTrash(id: string) {
     setIsMoveToTrash(true);
@@ -38,6 +40,33 @@ export default function RecipePage() {
       setIsMoveToTrash(false);
     }
   }
+
+  async function handleBookmark(id: string) {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setIsBookmarking(true);
+
+    try {
+      if (isBookmarked) {
+        await recipeApi.unbookmark(id);
+        setIsBookmarked(false);
+      } else {
+        await recipeApi.bookmark(id);
+        setIsBookmarked(true);
+      }
+    } catch (error) {
+      setBookmarkError(error instanceof Error ? error.message : 'Failed to bookmark/unbookmark recipe');
+    } finally {
+      setIsBookmarking(false);
+    }
+  }
+
+  useEffect(() => {
+    if (recipe) setIsBookmarked(recipe.isBookmarked);
+  }, [recipe]);
 
   if (loading) {
     return (
@@ -88,6 +117,13 @@ export default function RecipePage() {
         </Alert>
       )}
 
+      {bookmarkError && (
+        <Alert variant="destructive">
+          <AlertTitle>Bookmark failed</AlertTitle>
+          <AlertDescription>{bookmarkError}</AlertDescription>
+        </Alert>
+      )}
+
       <div className="space-y-4">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
@@ -97,6 +133,18 @@ export default function RecipePage() {
               {recipe.servingSize} {recipe.servingSize === 1 ? 'serving' : 'servings'}
             </p>
           </div>
+
+          {!isOwner && (
+            <Button
+              variant="outline"
+              onClick={() => handleBookmark(recipe.id)}
+              className={`flex items-center gap-0.5 ${isBookmarked && 'bg-accent-foreground text-accent'}`}
+              disabled={isBookmarking}
+            >
+              {isBookmarked ? <BookmarkCheck className="fill-accent text-accent-foreground size-5" /> : <Bookmark />}
+              {isBookmarking ? 'Saving...' : isBookmarked ? 'Bookmarked' : 'Bookmark'}
+            </Button>
+          )}
 
           {isOwner && (
             <div className="flex gap-2">

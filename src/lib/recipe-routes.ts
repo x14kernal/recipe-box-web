@@ -8,5 +8,7 @@ export function getRecipesPath(type: RecipesType): string {
       return '/recipes/mine';
     case 'trashed':
       return '/recipes/trash';
+    case 'bookmarked':
+      return '/bookmarks';
   }
 }
