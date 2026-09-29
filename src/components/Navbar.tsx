@@ -1,4 +1,4 @@
-import { Bookmark, LogIn, LogOut, Menu, Plus, Search, Trash2, UserRound } from 'lucide-react';
+import { Bookmark, LogIn, LogOut, Menu, Monitor, Plus, Search, Trash2, UserRound } from 'lucide-react';
 import { useState } from 'react';
 import { Form, Link, useNavigate } from 'react-router';
 
@@ -25,21 +25,11 @@ export default function Navbar() {
 
   return (
     <nav className="bg-background/70 sticky top-4 z-50 mx-auto mt-4 flex w-[calc(100%-1rem)] max-w-6xl items-center justify-between gap-3 rounded-5xl border border-orange-50/50 px-4 py-2.5 shadow-sm shadow-orange-900/20 backdrop-blur-xl sm:px-5">
-      {/* Logo + Search */}
-      <div className="flex flex-1 items-center gap-8">
-        <Link to="/" className="shrink-0 font-bold tracking-tight">
-          RECIPES-X
-        </Link>
+      {/* Logo  */}
 
-        {/* Desktop search */}
-        <Form method="get" action="/recipes" className="hidden flex-1 md:flex">
-          <div className="relative w-full max-w-md">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-
-            <Input name="search" placeholder="Search recipes..." className="h-9 pl-9" />
-          </div>
-        </Form>
-      </div>
+      <Link to="/" className="group shrink-0 text-base font-bold tracking-tight transition-colors">
+        RECIPES<span className="text-primary transition-colors group-hover:text-foreground">-X</span>
+      </Link>
 
       {/* Desktop actions */}
       <div className="hidden shrink-0 items-center gap-2 md:flex">
@@ -58,6 +48,11 @@ export default function Navbar() {
             <Button variant="ghost" size="sm" onClick={() => navigate('/recipes/bookmarks')}>
               <Bookmark />
               Bookmarks
+            </Button>
+
+            <Button variant="ghost" size="sm" onClick={() => navigate('/sessions')}>
+              <Monitor />
+              Sessions
             </Button>
 
             <Button variant="ghost" size="sm" onClick={() => navigate('/recipes/trash')}>
@@ -99,11 +94,9 @@ export default function Navbar() {
             </SheetHeader>
 
             <div className="flex flex-1 flex-col gap-4 px-4">
-              {/* Mobile search */}
               <Form method="get" action="/recipes" onSubmit={() => setOpen(false)}>
                 <div className="relative">
                   <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
-
                   <Input name="search" placeholder="Search recipes..." className="pl-9" />
                 </div>
               </Form>
@@ -127,6 +120,11 @@ export default function Navbar() {
                     >
                       <Bookmark />
                       Bookmarks
+                    </Button>
+
+                    <Button variant="secondary" className="justify-start" onClick={() => handleNavigate('/sessions')}>
+                      <Monitor />
+                      Sessions
                     </Button>
 
                     <Button

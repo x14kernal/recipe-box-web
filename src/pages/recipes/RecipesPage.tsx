@@ -3,6 +3,7 @@ import RecipesList from '../../components/recipes/RecipesList';
 import { Dices } from 'lucide-react';
 import { useRandomRecipe } from '@/hooks/useRandomRecipe';
 import { useNavigate } from 'react-router';
+import { PageHeader } from '@/components/PageHeader';
 
 export default function RecipesPage() {
   const navigate = useNavigate();
@@ -16,7 +17,11 @@ export default function RecipesPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold tracking-tight">Recipes</h1>
+      <PageHeader
+        eyebrow="Recipe collection"
+        title="Recipes"
+        description="Browse and discover recipes from the community."
+      />
 
       <RecipesList />
 

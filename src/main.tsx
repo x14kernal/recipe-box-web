@@ -1,7 +1,7 @@
 import './index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import { createBrowserRouter, redirect, RouterProvider } from 'react-router';
 
 import { AuthProvider } from './contexts/AuthContext';
 import AuthLayout from './layouts/AuthLayout';
@@ -18,6 +18,7 @@ import RecipesPage from './pages/recipes/RecipesPage';
 import MyTrashedRecipesPage from './pages/recipes/MyTrashedRecipesPage';
 import MyTrashedRecipePage from './pages/recipes/MyTrashedRecipePage';
 import BookmarksPage from './pages/recipes/BookmarksPage';
+import SessionsPage from './pages/auth/SessionsPage';
 
 const router = createBrowserRouter([
   {
@@ -29,8 +30,10 @@ const router = createBrowserRouter([
       {
         Component: ProtectedLayout,
         children: [
+          { path: 'sessions', Component: SessionsPage },
           { path: 'recipes/new', Component: NewRecipePage },
           { path: 'recipes/bookmarks', Component: BookmarksPage },
+          { path: 'bookmarks/:id', loader: ({ params }) => redirect(`/recipes/${params.id}`) },
           { path: 'recipes/mine', Component: MyRecipesPage },
           { path: 'recipes/mine/:id', Component: MyRecipePage },
           { path: 'recipes/trash', Component: MyTrashedRecipesPage },
